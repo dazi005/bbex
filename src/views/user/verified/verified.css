@@ -1,0 +1,139 @@
+.steps-content {
+    margin-top: 16px;
+    background-color: #fafafa;
+    min-height: 200px;
+    text-align: center;
+    padding: 20px 0;
+}
+.steps-attention {
+    position: relative;
+    padding-left: 30px;
+    color: #fc1f1f;
+    text-align: left;
+}
+.steps-attention > .ant-btn {
+    margin-left: 10px;
+}
+.steps-attention > .example-box {
+    z-index: 10;
+    position: absolute;
+    left: 50%; 
+    top: 50px;
+    padding: 20px 30px;
+    border-radius: 10px;
+    background-color: #fff;
+    border: 1px solid #ededed;
+    transform: translateX(-50%);
+}
+.steps-attention > .example-box::before{
+    position: absolute;
+    top: -6px;
+    right: 118px;
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-left: 1px solid #ededed;
+    border-top: 1px solid #ededed;
+    background-color: #fff;
+    transform: rotate(45deg);
+}
+.example-text span{
+    display: inline-block;
+    width: 165px;
+    margin-top: 5px;
+    color: #666;
+    text-align: center;
+}
+  
+.steps-action {
+    margin-top: 24px;
+    text-align: center;
+}
+
+.steps-photos {
+    margin-top: 40px;
+    margin-left: 30px;
+}
+.steps-photos > .steps-photo-box {
+    float: left;
+    margin-right: 20px;
+}
+.steps-photos .steps-photo-box .ant-upload-list,
+.steps-photos .steps-photo-box .ant-upload-select {
+    float: left;
+}
+.steps-photos .steps-photo-box .ant-upload-list-item,
+.steps-photos .steps-photo-box .ant-upload-select {
+    position: relative;
+    width: 280px;
+    height: 260px;
+    border-radius: 10px;
+    border: 1px dashed #d4a668;
+}
+.steps-photos .steps-photo-box .ant-upload-list-item:last-child,
+.steps-photos .steps-photo-box .ant-upload-select:last-child {
+    margin-right: 0;
+}
+.steps-photos .steps-photo-box  .ant-upload-list-item-info {
+    position: relative;
+}
+.steps-photos .steps-photo-box  .ant-upload-list-item-info>span {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.steps-photos > .steps-photo-box > .ant-upload-select:before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    font-family: "iconfont";
+    font-size: 200px;
+    line-height: 1;
+}
+.steps-photos > .steps-photo-box.front > .ant-upload-select:before {
+    content: "\e68d";
+}
+.steps-photos > .steps-photo-box.back > .ant-upload-select:before {
+    content: "\e68e";
+}
+.steps-photos > .steps-photo-box.handheld > .ant-upload-select:before {
+    top: 10px;
+    content: "\e691";
+    font-size: 180px;
+}
+
+.steps-photos .ant-upload.ant-upload-select > .ant-upload {
+    position: relative;
+    vertical-align: bottom;
+}
+.steps-photos .ant-upload.ant-upload-select > .ant-upload > img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    max-width: 90%;
+    max-height: 90%;
+    transform: translate(-50%, -50%);
+}
+
+.steps-photos .ant-upload.ant-upload-select > .ant-upload .ant-upload-text {
+    padding-bottom: 10px;
+}
+
+.steps-photos .anticon.anticon-plus::before {
+    font-size: 20px;
+}
+
+.steps-content > .iconfont {
+    display: block;
+    margin-top: 20px;
+    color: #d4a668;
+    font-size: 100px;
+}
+.steps-content > h3 {
+    margin: 20px 0;
+    font-size: 20px;
+}
+

@@ -1,0 +1,29 @@
+{
+  "name": "bbex",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "antd": "^3.4.1",
+    "classnames": "^2.2.5",
+    "qrcode.react": "^0.8.0",
+    "react": "^16.3.1",
+    "react-dom": "^16.3.1",
+    "react-loadable": "^5.3.1",
+    "react-responsive-carousel": "^3.1.37",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.1.4"
+  },
+  "scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test --env=jsdom",
+    "eject": "react-app-rewired eject"
+  },
+  "devDependencies": {
+    "babel-plugin-import": "^1.7.0",
+    "react-app-rewire-less": "^2.1.1",
+    "react-app-rewired": "^1.5.0"
+  },
+  "proxy": "http://api.bbex.one"
+}

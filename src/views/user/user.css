@@ -1,0 +1,81 @@
+.content.user {
+    padding: 20px 0 40px;
+}
+.user-bar {
+    width: 180px;
+    height: 500px;
+    color: #666;
+    background-color: #fff;
+}
+.user-header {
+    padding: 20px 0;
+    border-bottom: 1px solid #e6e6e6;
+    color: #666;
+    text-align: center;
+    background-color: #efefef;
+}
+.user-avatar {
+    width: 60px;
+    height: 60px;
+    margin: 10px auto;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 60px;
+    color: #fff;
+    font-size: 20px;
+    background-color: #d4a668;
+}
+.user-nav {
+    margin-top: 20px;
+}
+.user-nav .user-link {
+    display: block;
+    color: #666;
+    line-height: 46px;
+    text-align: center;
+    border-left: 2px solid transparent;
+}
+.user-nav .user-link.active {
+    color: #d4a668;
+    border-left-color: #d4a668;
+}
+.user-nav .user-link>.iconfont {
+    padding-right: 10px;
+}
+
+.user-cont {
+    width: 1000px;
+    padding: 40px 30px;
+    background-color: #fff;
+}
+
+
+
+.verification-popup {
+    text-align: center;
+}
+.verification-popup .icon-icon{
+    font-size: 70px;
+    color: #ea0053;
+}
+.verification-popup .message {
+    padding: 10px;
+    font-size: 16px;
+    color: #ea0053;
+}
+.verification-popup .input-verification:link,
+.verification-popup .input-verification:visited {
+    display: block;
+    height: 78px;
+    margin: 10px 0;
+    padding: 20px;
+    padding-left: 60px;
+    color: #333;
+    font-size: 16px;
+    line-height: 2;
+    background: #f8f8f8 170px 18px url(../../assets/images/verify_google.png) no-repeat;
+    border: 1px solid #eaeaea;
+}
+.verification-popup .input-verification:hover {
+    color: #333;
+}
