@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
+import { message } from 'antd';
 import request from '../../utils/request';
 import QRCode from 'qrcode.react';
 import classnames from 'classnames';
@@ -18,6 +19,8 @@ class Authentication extends Component {
         request('/user/createGoogleSecret').then(json => {
             if(json.code === 10000000) {
                 this.setState(json.data);
+            }else {
+                message.error(json.msg);
             }
         });
     }
@@ -47,6 +50,8 @@ class Authentication extends Component {
                 account.googleAuth = secret;
                 sessionStorage.setItem('account', JSON.stringify(account));
                 this.props.history.push('/userCenter');
+            }else {
+                message.error(json.msg);
             }
         });
     }

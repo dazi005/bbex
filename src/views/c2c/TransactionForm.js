@@ -23,19 +23,25 @@ class TransactionForm extends Component {
     }
 
     handlePrice = (e) => {
-        this.setState({ price: e.target.value });
+        const price = e.target.value;
+        const amount = (price * this.state.volume).toFixed(2);
+        this.setState({ price, amount });
     }
 
     handleVolume = (e) => {
-        this.setState({ volume: e.target.value });
+        const volume = e.target.value;
+        const amount = (volume * this.state.price).toFixed(2);
+        this.setState({ volume, amount });
     }
 
     handleAmount = (e) => {
-        this.setState({ amount: e.target.value });
+        const amount = e.target.value;
+        const volume = amount/this.state.price;
+        this.setState({ volume, amount });
     }
 
     render() {
-        const { coin, exType } = this.props;
+        const { coin, exType, freezePrice } = this.props;
         const { price, volume, amount } = this.state;
         const typeText = {
             'buy': '买入',
@@ -50,6 +56,7 @@ class TransactionForm extends Component {
                         size="large"
                         value={price}
                         placeholder="请输入价格"
+                        disabled={freezePrice}
                         onChange={this.handlePrice}
                     />
                 </li>

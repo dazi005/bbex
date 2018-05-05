@@ -16,27 +16,40 @@ class Register extends Component {
         graphicCode: '',
         errorTip: '',
         popup: false,
+        count: 60,
     }
 
     inputValue = (e) => {
-        this.setState({[e.target.id]: e.target.value});
+        this.setState({ [e.target.id]: e.target.value });
     }
 
     closePopup = () => {
-        this.setState({popup: false});
+        this.setState({ popup: false });
+    }
+
+    countDown = () => {
+        let t = setInterval(() => {
+            if(this.state.count > 0) {
+                this.setState({ count: this.state.count-1 });
+            }else {
+                this.setState({ count: 60 });
+                clearInterval(t);
+            } 
+        }, 1000);
     }
 
     getValidCode = () => {
-        if(this.state.mail) {
-            this.setState({ 
+        const { mail, count } = this.state;
+        if (mail && count > 59) {
+            this.setState({
                 popup: <GraphicPopup
                     mail={this.state.mail}
                     type="register"
                     cancelHandle={this.closePopup}
+                    confirmHandle={this.countDown}
                 >
                 </GraphicPopup>
             });
-
         } else {
             this.setState({ errorTip: '请输入邮箱' });
         }
@@ -50,7 +63,7 @@ class Register extends Component {
             vaildCode,
             inviteCode,
         } = this.state;
-        request('/user/register',{
+        request('/user/register', {
             body: {
                 registerType,
                 mail: mail,
@@ -59,8 +72,10 @@ class Register extends Component {
                 inviteCode,
             }
         }).then(json => {
-            if(json.code === 10000000) {
+            if (json.code === 10000000) {
                 this.props.history.push('/signin');
+            }else {
+                
             }
         })
     }
@@ -75,6 +90,7 @@ class Register extends Component {
             errorTip,
             agree,
             popup,
+            count,
         } = this.state;
         const ok = mail && password && repassword && vaildCode && agree;
         return (
@@ -98,14 +114,14 @@ class Register extends Component {
                         <li>
                             <i className="iconfont icon-yanzhengma2"></i>
                             <input type="text" className="text" id="vaildCode" value={vaildCode} onChange={this.inputValue} placeholder="邮箱验证码" />
-                            <button className="inner-button" onClick={this.getValidCode}>获取验证码</button>
+                            <button className="inner-button" onClick={this.getValidCode}>{count > 59 ? '获取验证码' : `${count}秒`}</button>
                         </li>
                         <li>
                             <i className="iconfont icon-yaoqingqia"></i>
                             <input type="text" className="text" id="inviteCode" value={inviteCode} onChange={this.inputValue} placeholder="邀请码（选填）" />
                         </li>
                         <li>
-                            <input type="checkbox" className="checkbox" id="agree" checked={agree} onChange={() => { this.setState({agree: !agree})}} />
+                            <input type="checkbox" className="checkbox" id="agree" checked={agree} onChange={() => { this.setState({ agree: !agree }) }} />
                             <label htmlFor="agree">我已阅读并同意<Link to="javascript:void(0)"> 服务条款</Link></label>
                         </li>
                         <li>

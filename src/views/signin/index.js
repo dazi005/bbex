@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { message } from 'antd';
 import request from '../../utils/request';
 import classnames from 'classnames';
 
@@ -7,9 +8,8 @@ class Signin extends Component {
     state = {
         username: '',
         password: '',
-        imgURL: '',
+        imgName: '',
         errorTip: '',
-        displayCode: false,
         code: '',
     }
 
@@ -23,7 +23,7 @@ class Signin extends Component {
             password,
             code,
         } = this.state;
-        if(username && password) {
+        if (username && password) {
             request('/user/login', {
                 body: {
                     username,
@@ -36,15 +36,29 @@ class Signin extends Component {
                     this.props.history.push('/user');
                 } else {
                     this.setState({ errorTip: json.msg });
-                    if (json.code === 10004002 && json.data === 10001001) {
-                        this.setState({
-                            displayCode: true,
-                            imgURL: `/bbex/valid/createCode?username=${this.state.username}&type=login`,
-                        });
-                    } 
+                    if (json.data === 10001001) {
+                        this.getValidImg();
+                    }
                 }
             });
         }
+    }
+
+    getValidImg = () => {
+        const { username } = this.state;
+        request('/valid/createCode', {
+            method: 'GET',
+            body: {
+                username,
+                type: 'login',
+            }
+        }).then(json => {
+            if (json.code === 10000000) {
+                this.setState({ imgName: json.data.imageName });
+            } else {
+                message.error(json.msg);
+            }
+        })
     }
 
     render() {
@@ -52,8 +66,8 @@ class Signin extends Component {
             username,
             password,
             errorTip,
-            displayCode,
             code,
+            imgName,
         } = this.state;
         const ok = this.state.username && this.state.password;
         return (
@@ -74,25 +88,28 @@ class Signin extends Component {
                             <i className="iconfont icon-suo"></i>
                             <input type="password" className="text" id="password" value={password} onChange={this.inputValue} placeholder="密码" />
                         </li>
-                        {displayCode && <li>
-                            <i className="iconfont icon-yanzhengma2"></i>
-                            <input
-                                type="text" 
-                                className="text" 
-                                id="code" 
-                                value={code} 
-                                onChange={this.inputValue} 
-                                placeholder="验证码" 
-                            />
-                            <img
-                                src={`/bbex/valid/createCode?username=${username}&type=login`}
-                                className="inner-graphic"
-                                alt="图形验证码"
-                                onClick={(e) => {
-                                    e.target.src = e.target.src;
-                                }}
-                            />
-                        </li>}
+                        {imgName && (
+                            [<li>
+                                <i className="iconfont icon-yanzhengma2"></i>
+                                <input
+                                    type="text"
+                                    className="text"
+                                    id="code"
+                                    value={code}
+                                    onChange={this.inputValue}
+                                    placeholder="验证码"
+                                />
+                                <img
+                                    src={`http://images.bbex.one/image/view/${imgName}`}
+                                    className="inner-graphic"
+                                    alt="图形验证码"
+                                    onClick={this.getValidImg}
+                                />
+                            </li>,
+                            <li style={{ textAlign: 'right' }}>
+                                点击图片刷新验证码
+                            </li>]
+                        )}
                         <li><input type="submit" className={classnames({
                             button: true,
                             disabled: !ok

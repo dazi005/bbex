@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Table, Button, Modal, Tabs, message } from 'antd';
 import classnames from 'classnames';
+import { stampToDate, copy } from '../../utils';
 import request from '../../utils/request';
 import TransactionForm from './TransactionForm';
 
@@ -8,23 +9,26 @@ const TabPane = Tabs.TabPane;
 
 message.config({
     top: 200,
-    maxCount: 1,
+    maxCount: '1',
 });
 
-const ExtraContent = (
-    <div className="extra-cont">
-        <span><i className="iconfont icon-phone"></i>卖家：15820757329</span>
-        <a href="javascript:;"><i className="iconfont icon-kefu"></i>申请客服处理</a>
-    </div>
-)
-
-const ExpandComponent = ({ record, previewImage, onPreview, onCloseImage }) => {
+const ExpandComponent = ({ 
+    record, 
+    previewImage, 
+    onPreview, 
+    onCloseImage, 
+    confirmPay, 
+    cancelPay
+}) => {
     const { bankInfo, totalPrice, radomNum } = record;
-
-    console.log(record);
     return (
         <div className="payment-box">
-            <Tabs tabBarExtraContent={ExtraContent}>
+            <Tabs tabBarExtraContent={
+                <div className="extra-cont">
+                    <span><i className="iconfont icon-phone"></i>卖家：{bankInfo.mobile}</span>
+                    <a href="javascript:;"><i className="iconfont icon-kefu"></i>申请客服处理</a>
+                </div>
+            }>
                 <TabPane tab={<span><i className="iconfont icon-yinhangqia"></i>卖家银行卡信息</span>} key="bank">
                     <div className="payment-box-cont">
                         <h3>请使用绑定的银行卡完成付款，付款时填写以下信息</h3>
@@ -38,11 +42,11 @@ const ExpandComponent = ({ record, previewImage, onPreview, onCloseImage }) => {
                                     <th>付款备注</th>
                                 </tr>
                                 <tr>
-                                    <td>{bankInfo.realName} <i className="iconfont icon-copy"></i></td>
-                                    <td>{bankInfo.cardNo} <i className="iconfont icon-copy"></i></td>
-                                    <td>{bankInfo.bankName}/{bankInfo.branchBankName} <i className="iconfont icon-copy"></i></td>
-                                    <td>{totalPrice} <i className="iconfont icon-copy"></i></td>
-                                    <td>{radomNum} <i className="iconfont icon-copy"></i></td>
+                                    <td onClick={copy}>{bankInfo.realName} <i className="iconfont icon-copy"></i></td>
+                                    <td onClick={copy}>{bankInfo.cardNo} <i className="iconfont icon-copy"></i></td>
+                                    <td onClick={copy}>{bankInfo.bankName}/{bankInfo.branchBankName} <i className="iconfont icon-copy"></i></td>
+                                    <td onClick={copy}>{totalPrice} <i className="iconfont icon-copy"></i></td>
+                                    <td onClick={copy}>{radomNum} <i className="iconfont icon-copy"></i></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -69,10 +73,10 @@ const ExpandComponent = ({ record, previewImage, onPreview, onCloseImage }) => {
                                         <th width="100px">付款备注</th>
                                     </tr>
                                     <tr>
-                                        <td>{bankInfo.realName} <i className="iconfont icon-copy"></i></td>
-                                        <td>{bankInfo.alipayNo} <i className="iconfont icon-copy"></i></td>
-                                        <td>{totalPrice} <i className="iconfont icon-copy"></i></td>
-                                        <td>{radomNum} <i className="iconfont icon-copy"></i></td>
+                                        <td onClick={copy}>{bankInfo.realName} <i className="iconfont icon-copy"></i></td>
+                                        <td onClick={copy}>{bankInfo.alipayNo} <i className="iconfont icon-copy"></i></td>
+                                        <td onClick={copy}>{totalPrice} <i className="iconfont icon-copy"></i></td>
+                                        <td onClick={copy}>{radomNum} <i className="iconfont icon-copy"></i></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -100,10 +104,10 @@ const ExpandComponent = ({ record, previewImage, onPreview, onCloseImage }) => {
                                         <th width="100px">付款备注</th>
                                     </tr>
                                     <tr>
-                                        <td>{bankInfo.realName} <i className="iconfont icon-copy"></i></td>
-                                        <td>{bankInfo.wechatNo} <i className="iconfont icon-copy"></i></td>
-                                        <td>{totalPrice} <i className="iconfont icon-copy"></i></td>
-                                        <td>{radomNum} <i className="iconfont icon-copy"></i></td>
+                                        <td onClick={copy}>{bankInfo.realName} <i className="iconfont icon-copy"></i></td>
+                                        <td onClick={copy}>{bankInfo.wechatNo} <i className="iconfont icon-copy"></i></td>
+                                        <td onClick={copy}>{totalPrice} <i className="iconfont icon-copy"></i></td>
+                                        <td onClick={copy}>{radomNum} <i className="iconfont icon-copy"></i></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -112,8 +116,8 @@ const ExpandComponent = ({ record, previewImage, onPreview, onCloseImage }) => {
                 </TabPane>
             </Tabs>
             <div className="payment-box-action">
-                <Button type="primary" size="large">我已付款给卖家</Button>
-                <Button type="normal" size="large">取消订单</Button>
+                <Button type="primary" size="large" onClick={() => { confirmPay(record) }}>我已付款给卖家</Button>
+                <Button type="normal" size="large" onClick={() => { cancelPay(record) }}>取消订单</Button>
             </div>
             <div className="payment-box-notice">
                 <h3>交易须知：</h3>
@@ -136,7 +140,7 @@ class TradeContainer extends Component {
         coinVolume: 0,
         advertList: null,
         current: 1,
-        pageSize: 2,
+        pageSize: 10,
         selectedCoin: null,
         recordIndex: 0,
         releaseVisible: false,
@@ -208,15 +212,15 @@ class TradeContainer extends Component {
         });
     }
 
-    switchRecord = (index) => {
+    switchRecord = index => {
         this.setState({ recordIndex: index });
     }
 
-    showModal = (visible) => {
+    showModal = visible => {
         this.setState({ [visible]: true });
     }
 
-    hideModal = (visible) => {
+    hideModal = visible => {
         this.setState({ [visible]: false });
     }
 
@@ -279,6 +283,7 @@ class TradeContainer extends Component {
         }).then(json => {
             if (json.code === 10000000) {
                 message.success('发布广告成功！');
+                this.getMyAdvertList();
             } else {
                 message.error(json.msg);
             }
@@ -312,6 +317,7 @@ class TradeContainer extends Component {
         }).then(json => {
             if (json.code === 10000000) {
                 message.success(`${typeText[exType]}${selectedCoin.symbol}成功！`);
+                this.getMyOrderList();
             } else if (json.code === 10004016) {
                 //自己不能卖给自己
                 Modal.error({
@@ -408,9 +414,9 @@ class TradeContainer extends Component {
     }
 
     //根据用户ID获取用户支付信息
-    getBankInfo = (id, userId) => {
+    getBankInfo = (id, askUserId) => {
         let { myOrderList } = this.state;
-        request(`/offline/bankInfo/${userId}`, {
+        request(`/offline/bankInfo/${askUserId}`, {
             method: 'GET',
         }).then(json => {
             if (json.code === 10000000 && json.data) {
@@ -428,7 +434,7 @@ class TradeContainer extends Component {
         });
     }
 
-    handleSwitchRelease = (key) => {
+    handleSwitchRelease = key => {
         if (key === '2') {
             this.getVolume();
         }
@@ -436,7 +442,7 @@ class TradeContainer extends Component {
 
     handleExpand = (expanded, record) => {
         if (expanded && !record.bankInfo) {
-            this.getBankInfo(record.id, record.userId);
+            this.getBankInfo(record.id, record.askUserId);
         }
     }
 
@@ -446,6 +452,67 @@ class TradeContainer extends Component {
 
     handleCloseImage = () => {
         this.setState({ previewImage: '' });
+    }
+
+    //确认付款
+    confirmPay = record => {
+        request('/offline/buy/confirm', {
+            body: { 
+                orderId: record.orderId,
+                subOrderId: record.subOrderId
+            }
+        }).then(json => {
+            if(json.code === 10000000) {
+                message.success('已确认收款');
+            }else {
+                message.error(json.msg);
+            }
+        })
+    }
+
+    //确认收款
+    confirmReceipt = record => {
+        request('/offline/sell/confirm', {
+            body: { 
+                orderId: record.orderId,
+                subOrderId: record.subOrderId
+            }
+        }).then(json => {
+            if(json.code === 10000000) {
+                message.success('确认收款成功');
+            }else {
+                message.error(json.msg);
+            }
+        })
+    }
+
+    //撤销交易
+    cancelPay = record => {
+        request('/offline/detail/cancel', {
+            body: { 
+                orderId: record.orderId,
+                subOrderId: record.subOrderId
+            }
+        }).then(json => {
+            if(json.code === 10000000) {
+                message.success('已撤销交易');
+            }else {
+                message.error(json.msg);
+            }
+        })
+    }
+    
+    //撤销广告
+    cancelAdvert = record => {
+        request('/offline/advert/cancel', {
+            body: { orderId: record.id }
+        }).then(json => {
+            if(json.code === 10000000) {
+                message.success('已撤销广告');
+            }else {
+                message.error(json.msg);
+            }
+        })
     }
 
     render() {
@@ -472,7 +539,7 @@ class TradeContainer extends Component {
         let undoneOrderList, completedOrderList, cancelledOrderList;
         if (myOrderList) {
             //未完成订单列表
-            undoneOrderList = myOrderList.filter(order => order.status === 0);
+            undoneOrderList = myOrderList.filter(order => order.status === 0 || order.status === 1);
 
             //已完成订单列表
             completedOrderList = myOrderList.filter(order => order.status === 2);
@@ -563,22 +630,39 @@ class TradeContainer extends Component {
             title: '下单时间',
             dataIndex: 'createDate',
             key: 'createDate',
+            render: (text, record) => stampToDate(Number(text), 'MM-DD hh:mm:ss'),
         }, {
             title: '操作',
             dataIndex: 'action',
             key: 'action',
             render: (text, record) => {
-                // console.log(text, record)
                 if (record.status === 0) {
-                    return (
-                        <Button
-                            type="primary"
-                            onClick={this.buy}
-                        >
-                            我已付款给卖家
-                        </Button>
-                    )
-                } else {
+                    if(record.remarks === 'buy') {
+                        return (
+                            <Button
+                                type="primary"
+                                onClick={this.confirmPay.bind(this, record)}
+                            >
+                                我已付款给卖家
+                            </Button>
+                        )
+                    }else {
+                        return '等待收款';
+                    }
+                } else if(record.status === 1) {
+                    if(record.remarks === 'buy') {
+                        return '已付款';
+                    }else {
+                        return (
+                            <Button
+                                type="primary"
+                                onClick={this.confirmReceipt.bind(this, record)}
+                            >
+                                确认收款
+                            </Button>
+                        )
+                    }
+                }else {
                     return '--'
                 }
             }
@@ -588,6 +672,7 @@ class TradeContainer extends Component {
             title: '创建时间',
             dataIndex: 'createDate',
             key: 'createDate',
+            render: (text, record) => stampToDate(Number(text), 'MM-DD hh:mm:ss'),
         }, {
             title: '类型',
             dataIndex: 'exType',
@@ -611,7 +696,7 @@ class TradeContainer extends Component {
             render: (text, record) => (
                 <Button
                     type="primary"
-                    onClick={this.buy}
+                    onClick={this.cancelAdvert.bind(this, record)}
                 >
                     撤销广告
                 </Button>
@@ -715,6 +800,7 @@ class TradeContainer extends Component {
                                 dataSource={undoneOrderList}
                                 columns={orderColumns}
                                 onExpand={this.handleExpand}
+                                pagination={false}
                                 expandedRowRender={(record) => (
                                     record.bankInfo ? (
                                         <ExpandComponent
@@ -722,6 +808,8 @@ class TradeContainer extends Component {
                                             previewImage={previewImage}
                                             onPreview={this.handlePreview}
                                             onCloseImage={this.handleCloseImage}
+                                            confirmPay={this.confirmPay}
+                                            cancelPay={this.cancelPay}
                                         />
                                     ) : null
                                 )}
@@ -731,18 +819,21 @@ class TradeContainer extends Component {
                             <Table
                                 dataSource={myAdvertList}
                                 columns={advertColumns}
+                                pagination={false}
                             />
                         )}
                         {recordIndex === 2 && (
                             <Table
                                 dataSource={completedOrderList}
                                 columns={orderColumns}
+                                pagination={false}
                             />
                         )}
                         {recordIndex === 3 && (
                             <Table
                                 dataSource={cancelledOrderList}
                                 columns={orderColumns}
+                                pagination={false}
                             />
                         )}
                     </div>
@@ -756,6 +847,7 @@ class TradeContainer extends Component {
                 >
                     {transactionVisible && (
                         <TransactionForm
+                            freezePrice
                             coin={coin}
                             exType={exType}
                             price={selectedCoin.price}

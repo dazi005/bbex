@@ -1,0 +1,83 @@
+.property-header {
+    margin-bottom: 20px;
+}
+.property-header h2 {
+    padding-top: 20px;
+    font-size: 16px;
+}
+.property-header h2 .ant-checkbox-wrapper {
+    margin-left: 20px;
+}
+.property-header .pull-right {
+    text-align: right;
+}
+.property-header .pull-right li.assets-estimate {
+    font-weight: bold;
+}
+.property-header .pull-right .anticon {
+    color: #d4a668;
+    font-size: 14px;
+    padding-right: 5px;
+}
+.property-action .ant-btn{
+    margin-right: 20px;
+}
+.available-col .icon-qianbao {
+    padding-right: 5px;
+    font-size: 20px;
+    color: #d4a668;
+}
+
+
+.currency-logo {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+    vertical-align: middle;
+    background-image: url(../../../assets/images/coin_logos.png);
+    background-repeat: no-repeat;
+}
+.currency-logo.btc {
+    background-position: -15px top;
+}
+.currency-logo.usdt {
+    background-position: -30px -90px;
+}
+.currency-logo.cnc {
+    background-position: -60px -90px;
+}
+.currency-logo.bitcny {
+    background-position: -75px -45px;
+}
+.currency-logo.gat {
+    background-position: -75px -90px;
+}
+.currency-logo.eth {
+    background-position: -30px top;
+}
+.currency-logo.doge {
+    background-position: -105px top;
+}
+.currency-logo.ltc {
+    background-position: left top;
+}
+.currency-logo.xrp {
+    background-position: -75px -15px;
+}
+.currency-logo.bts {
+    background-position: -120px top;
+}
+.currency-logo.yoyo {
+    background-position: -135px -90px;
+}
+.currency-logo.ae {
+    background-position: -105px -60px;
+}
+.currency-logo.ardr {
+    background-position: -30px -15px;
+}
+.currency-logo.atn {
+    background-position: -15px -60px;
+}
+

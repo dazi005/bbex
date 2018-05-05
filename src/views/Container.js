@@ -42,7 +42,7 @@ class Container extends Component {
                 </Link>
                 <ul className="nav-bar">
                     <li>
-                    <Link to="/trading">交易中心</Link>
+                    <Link to="/trade">交易中心</Link>
                     </li>
                     <li>
                     <Link to="/c2c">C2C</Link>

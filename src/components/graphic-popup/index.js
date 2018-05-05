@@ -1,15 +1,20 @@
 import React, { Component } from 'react';
+import { message } from 'antd';
 import Popup from '../popup';
 import request from '../../utils/request';
-// import './graphic-popup.css';
 
 class GraphicPopup extends Component {
     state = {
         code: '',
+        imgName: '',
+    }
+
+    componentWillMount() {
+        this.getValidImg();
     }
 
     inputValue = (e) => {
-        this.setState({[e.target.id]: e.target.value});
+        this.setState({ [e.target.id]: e.target.value });
     }
 
     sendCode = () => {
@@ -21,30 +26,46 @@ class GraphicPopup extends Component {
             confirmHandle,
         } = this.props;
 
-        if(this.state.code) {
-            request('/mail/sendCode',{
+        if (this.state.code) {
+            request('/mail/sendCode', {
                 body: { mail, type, code, }
-            }).then((json) => {
-                if(json.code === 10000000) {
+            }).then(json => {
+                if (json.code === 10000000) {
                     cancelHandle && cancelHandle();
                     confirmHandle && confirmHandle();
-                }else if(json.code === -2) {
-                    this.setState({ errorTip: '验证码输入错误！'});
-                }else {
-                    this.setState({ errorTip: json.msg});
+                } else if (json.code === -2) {
+                    this.setState({ errorTip: '验证码输入错误！' });
+                } else {
+                    this.setState({ errorTip: json.msg });
                 }
             });
-        }else {
-            this.setState({ errorTip: '请输入验证码！'});
+        } else {
+            this.setState({ errorTip: '请输入验证码！' });
         }
     }
 
+    getValidImg = () => {
+        const { mail, type } = this.props;
+        request('/valid/createCode', {
+            method: 'GET',
+            body: {
+                type,
+                username: mail,
+            }
+        }).then(json => {
+            if (json.code === 10000000) {
+                this.setState({ imgName: json.data.imageName });
+            } else {
+                message.error(json.msg);
+            }
+        })
+    }
+
     render() {
-        const {
-            mail,
-            type,
-            cancelHandle,
-        } = this.props;
+        const { cancelHandle } = this.props;
+
+        const { imgName } = this.state;
+
         return (
             <Popup
                 wrapClassName="graphic-popup"
@@ -67,15 +88,16 @@ class GraphicPopup extends Component {
                             onChange={this.inputValue}
                             placeholder="图形验证码"
                         />
-                        <img
-                            src={`/bbex/valid/createCode?username=${mail}&type=${type}`}
-                            className="inner-graphic"
-                            alt="图形验证码"
-                            onClick={(e) => {
-                                e.target.src = e.target.src;
-                            }}
-                        />
+                        {imgName && (
+                            <img
+                                src={`http://images.bbex.one/image/view/${imgName}`}
+                                className="inner-graphic"
+                                alt="图形验证码"
+                                onClick={this.getValidImg}
+                            />
+                        )}
                     </li>
+                    <li style={{ textAlign: 'right' }}>点击图片刷新验证码</li>
                 </ul>
             </Popup>
         )

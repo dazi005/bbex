@@ -27,6 +27,7 @@ html, body {
 
 a:link, a:visited {
     color: rgb(153, 153, 153);
+    text-decoration: none!important;
 }
 a:hover {
     color: #fff;
@@ -334,6 +335,15 @@ a:hover {
 }
 .form-box .ant-btn {
     width: 100%;
+}
+.form-box-desc {
+    margin-top: 40px;
+    font-size: 20px;
+    text-align: center;
+}
+.form-box-text {
+    margin-top: 40px;
+    font-size: 14px;
 }
 
 .button {

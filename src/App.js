@@ -25,8 +25,8 @@ const Home = Loadable({
   loading: Loading
 });
 
-const Trading = Loadable({
-  loader: () => import("./views/trading"),
+const Trade = Loadable({
+  loader: () => import("./views/trade"),
   loading: Loading
 });
 
@@ -70,7 +70,7 @@ const App = () => (
     <Container>
       <Switch>
         <Route exact path="/" component={Home} />
-        <Route path="/trading" component={Trading} />
+        <Route path="/trade" component={Trade} />
         <Route path="/signin" component={Signin} />
         <Route path="/register" component={Register} />
         <Route path="/reset" component={Reset} />
