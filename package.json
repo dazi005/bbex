@@ -25,5 +25,5 @@
     "react-app-rewire-less": "^2.1.1",
     "react-app-rewired": "^1.5.0"
   },
-  "proxy": "http://api.bbex.one"
+  "proxy": "http://192.168.3.52:8083"
 }

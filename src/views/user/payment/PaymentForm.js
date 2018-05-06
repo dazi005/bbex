@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Input, Button, Upload, Icon, message } from 'antd';
 import request from '../../../utils/request';
+import { IMAGES_ADDRESS } from '../../../utils/constants';
 
 const FormItem = Form.Item;
 
@@ -78,7 +79,7 @@ class PaymentForm extends Component {
         const typeText = this.props.type === 'wechat' ? '微信' : '支付宝';
         const account = JSON.parse(sessionStorage.getItem('account'));
         const qrcodeId = account[`${this.props.type}QrcodeId`];
-        const qrcodeUrl = imageUrl ? imageUrl : (qrcodeId ? `http://images.bbex.one/view/${qrcodeId}` : '');
+        const qrcodeUrl = imageUrl ? imageUrl : (qrcodeId ? `${IMAGES_ADDRESS}/view/${qrcodeId}` : '');
 
         let submitBtnText = '确认绑定';
         if ((type === 'wechat' && account.wechatNo) || (type === 'alipay' && account.alipayNo)) {
@@ -145,7 +146,7 @@ class PaymentForm extends Component {
                         })(
                             <Upload
                                 key={type}
-                                action="http://images.bbex.one/upload"
+                                action={`${IMAGES_ADDRESS}/upload`}
                                 listType="picture-card"
                                 showUploadList={false}
                                 beforeUpload={this.beforeUpload}

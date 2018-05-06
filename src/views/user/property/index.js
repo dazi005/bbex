@@ -27,7 +27,6 @@ class Property extends Component {
     }
 
     inputVolume = (e) => {
-        
         this.setState({ handleVolume: e.target.value });
     }
 

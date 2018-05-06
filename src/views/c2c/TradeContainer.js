@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { stampToDate, copy } from '../../utils';
 import request from '../../utils/request';
 import TransactionForm from './TransactionForm';
+import { IMAGES_ADDRESS, WS_ADDRESS } from '../../utils/constants';
 
 const TabPane = Tabs.TabPane;
 
@@ -12,12 +13,12 @@ message.config({
     maxCount: '1',
 });
 
-const ExpandComponent = ({ 
-    record, 
-    previewImage, 
-    onPreview, 
-    onCloseImage, 
-    confirmPay, 
+const ExpandComponent = ({
+    record,
+    previewImage,
+    onPreview,
+    onCloseImage,
+    confirmPay,
     cancelPay
 }) => {
     const { bankInfo, totalPrice, radomNum } = record;
@@ -56,7 +57,7 @@ const ExpandComponent = ({
                     <div className="payment-box-cont clear">
                         <div className="payment-box-qrcode pull-left clear">
                             <img
-                                src={`http://images.bbex.one/view/${bankInfo.alipayQrcodeId}`}
+                                src={`${IMAGES_ADDRESS}/view/${bankInfo.alipayQrcodeId}`}
                                 alt="支付宝收款"
                                 onClick={() => { onPreview(bankInfo.alipayQrcodeId) }}
                             />
@@ -87,7 +88,7 @@ const ExpandComponent = ({
                     <div className="payment-box-cont clear">
                         <div className="payment-box-qrcode pull-left clear">
                             <img
-                                src={`http://images.bbex.one/view/${bankInfo.wechatQrcodeId}`}
+                                src={`${IMAGES_ADDRESS}/view/${bankInfo.wechatQrcodeId}`}
                                 alt="微信收款"
                                 onClick={() => { onPreview(bankInfo.wechatQrcodeId) }}
                             />
@@ -148,6 +149,7 @@ class TradeContainer extends Component {
         myOrderList: null,
         myAdvertList: null,
         previewImage: '',
+        ws: null,
     }
 
     componentWillReceiveProps(nextProps) {
@@ -164,21 +166,42 @@ class TradeContainer extends Component {
     }
 
     componentDidMount() {
-        // var ws = new WebSocket("wss://echo.websocket.org");
+        const userId = JSON.parse(sessionStorage.getItem('account')).id;
+        var ws = new WebSocket(`${WS_ADDRESS}/bbex/websocket?${userId}`);
+        ws.onopen = (evt) => {
+            console.log("Connection open ...");
+            ws.send("Hello WebSockets!");
+        };
 
-        // ws.onopen = function (evt) {
-        //     console.log("Connection open ...");
-        //     ws.send("Hello WebSockets!");
-        // };
+        ws.onmessage = (evt) => {
+            const record = JSON.parse(evt.data);
+            if (record.id) {
+                let hasRecord = false;
+                const myOrderList = this.state.myOrderList.map(item => {
+                    if (record.subOrderId === item.subOrderId) {
+                        record.key = record.id;
+                        hasRecord = true;
+                        return record;
+                    }
+                    return item;
+                });
+                if(!hasRecord) {
+                    record.key = record.id;
+                    myOrderList.push(record);
+                }
+                this.setState({ myOrderList });
+            }
+        };
 
-        // ws.onmessage = function (evt) {
-        //     console.log("Received Message: " + evt.data);
-        //     ws.close();
-        // };
+        ws.onclose = (evt) => {
+            console.log("Connection closed.");
+        };
 
-        // ws.onclose = function (evt) {
-        //     console.log("Connection closed.");
-        // };
+        this.setState({ ws });
+    }
+
+    componentWillUnmount() {
+        this.state.ws.close();
     }
 
     //根据币种和交易类型分页获取广告列表
@@ -404,8 +427,10 @@ class TradeContainer extends Component {
         request(`/offline/volume/${this.props.coin.coinId}`, {
             method: 'GET',
         }).then(json => {
-            if (json.code === 10000000 && json.data) {
-                this.setState({ coinVolume: json.data.volume });
+            if (json.code === 10000000) {
+                if(json.data) {
+                    this.setState({ coinVolume: json.data.volume });
+                }
             } else {
                 message.error(json.msg);
             }
@@ -447,7 +472,7 @@ class TradeContainer extends Component {
     }
 
     handlePreview = qrcodeId => {
-        this.setState({ previewImage: `http://images.bbex.one/view/${qrcodeId}` });
+        this.setState({ previewImage: `${IMAGES_ADDRESS}/view/${qrcodeId}` });
     }
 
     handleCloseImage = () => {
@@ -457,14 +482,15 @@ class TradeContainer extends Component {
     //确认付款
     confirmPay = record => {
         request('/offline/buy/confirm', {
-            body: { 
+            body: {
                 orderId: record.orderId,
                 subOrderId: record.subOrderId
             }
         }).then(json => {
-            if(json.code === 10000000) {
-                message.success('已确认收款');
-            }else {
+            if (json.code === 10000000) {
+                this.getMyOrderList();
+                message.success('确认付款成功！');
+            } else {
                 message.error(json.msg);
             }
         })
@@ -473,14 +499,15 @@ class TradeContainer extends Component {
     //确认收款
     confirmReceipt = record => {
         request('/offline/sell/confirm', {
-            body: { 
+            body: {
                 orderId: record.orderId,
                 subOrderId: record.subOrderId
             }
         }).then(json => {
-            if(json.code === 10000000) {
-                message.success('确认收款成功');
-            }else {
+            if (json.code === 10000000) {
+                this.getMyOrderList();
+                message.success('确认收款成功！');
+            } else {
                 message.error(json.msg);
             }
         })
@@ -489,27 +516,29 @@ class TradeContainer extends Component {
     //撤销交易
     cancelPay = record => {
         request('/offline/detail/cancel', {
-            body: { 
+            body: {
                 orderId: record.orderId,
                 subOrderId: record.subOrderId
             }
         }).then(json => {
-            if(json.code === 10000000) {
-                message.success('已撤销交易');
-            }else {
+            if (json.code === 10000000) {
+                this.getMyOrderList();
+                message.success('撤销交易成功！');
+            } else {
                 message.error(json.msg);
             }
         })
     }
-    
+
     //撤销广告
     cancelAdvert = record => {
         request('/offline/advert/cancel', {
             body: { orderId: record.id }
         }).then(json => {
-            if(json.code === 10000000) {
-                message.success('已撤销广告');
-            }else {
+            if (json.code === 10000000) {
+                this.getMyAdvertList();
+                message.success('撤销广告成功！');
+            } else {
                 message.error(json.msg);
             }
         })
@@ -606,6 +635,13 @@ class TradeContainer extends Component {
             title: '类型',
             dataIndex: 'remarks',
             key: 'remarks',
+            render: (text, record) => {
+                const typeToText = {
+                    'buy': '买入',
+                    'sell': '卖出',
+                }
+                return `${typeToText[text]}${record.symbol}`;
+            }
         }, {
             title: '价格(CNY)',
             dataIndex: 'price',
@@ -637,7 +673,7 @@ class TradeContainer extends Component {
             key: 'action',
             render: (text, record) => {
                 if (record.status === 0) {
-                    if(record.remarks === 'buy') {
+                    if (record.remarks === 'buy') {
                         return (
                             <Button
                                 type="primary"
@@ -646,13 +682,13 @@ class TradeContainer extends Component {
                                 我已付款给卖家
                             </Button>
                         )
-                    }else {
+                    } else {
                         return '等待收款';
                     }
-                } else if(record.status === 1) {
-                    if(record.remarks === 'buy') {
+                } else if (record.status === 1) {
+                    if (record.remarks === 'buy') {
                         return '已付款';
-                    }else {
+                    } else {
                         return (
                             <Button
                                 type="primary"
@@ -662,7 +698,7 @@ class TradeContainer extends Component {
                             </Button>
                         )
                     }
-                }else {
+                } else {
                     return '--'
                 }
             }
@@ -693,14 +729,18 @@ class TradeContainer extends Component {
             title: '操作',
             dataIndex: 'action',
             key: 'action',
-            render: (text, record) => (
-                <Button
-                    type="primary"
-                    onClick={this.cancelAdvert.bind(this, record)}
-                >
-                    撤销广告
-                </Button>
-            )
+            render: (text, record) => {
+                if (record.status === 0 || record.status === 2) {
+                    return <Button
+                        type="primary"
+                        onClick={this.cancelAdvert.bind(this, record)}
+                    >
+                        撤销广告
+                    </Button>
+                } else {
+                    return '--'
+                }
+            }
         }]
 
         return (
@@ -851,7 +891,7 @@ class TradeContainer extends Component {
                             coin={coin}
                             exType={exType}
                             price={selectedCoin.price}
-                            volume={selectedCoin.volume}
+                            volume={selectedCoin.volume-selectedCoin.lockVolume-selectedCoin.successVolume}
                             onSubmit={this.handleTransaction}
                         />
                     )}

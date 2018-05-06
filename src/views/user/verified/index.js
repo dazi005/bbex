@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Steps, Button, message, Upload, Icon } from 'antd';
 import request from '../../../utils/request';
+import { IMAGES_ADDRESS } from '../../../utils/constants';
 
 import './verified.css';
 import exampleImg from '../../../assets/images/card-template.png';
@@ -138,7 +139,7 @@ class Verified extends Component {
                                 const uploaded = this.state[`${type}IdCard`];
                                 return <Upload
                                     key={type}
-                                    action="http://images.bbex.one/card/upload"
+                                    action={`${IMAGES_ADDRESS}/card/upload`}
                                     listType="picture-card"
                                     className={`steps-photo-box${uploaded ? '' : ` ${type}`}`}
                                     showUploadList={false}

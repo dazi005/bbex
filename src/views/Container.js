@@ -133,7 +133,7 @@ class Container extends Component {
                     <Link to="https://www.bitcoin.org" target="_blank" rel="noopener noreferrer">bitcoin.org</Link>
                     <Link to="https://pool.btc.com" target="_blank" rel="noopener noreferrer">BTC.com矿池</Link>
                     </div>
-                    <div className="footer-copyright">Copyright 2018 9coin All Rights Reserved.</div>
+                    <div className="footer-copyright">Copyright 2018 All Rights Reserved.</div>
                 </div>
                 </footer>
             </div>

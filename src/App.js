@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Loadable from 'react-loadable';
 import Container from './views/Container';
+import Home from './views/home';
 
 import './App.css';
 import './assets/fonts/iconfont.css';
@@ -11,19 +12,16 @@ const Loading = ({ isLoading, error }) => {
   if (isLoading) {
     return <div>Loading...</div>;
   }
+
   // Handle the error state
   else if (error) {
     return <div>Sorry, there was a problem loading the page.</div>;
   }
+
   else {
     return null;
   }
 };
-
-const Home = Loadable({
-  loader: () => import("./views/home"),
-  loading: Loading
-});
 
 const Trade = Loadable({
   loader: () => import("./views/trade"),
