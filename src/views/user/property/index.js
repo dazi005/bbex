@@ -132,72 +132,87 @@ class Property extends Component {
             handleVolume,
             c2cData,
         } = this.state;
+
         const routineData = [{
+            key: Math.random(),
             coin: 'BTC(Bitcoin)',
             available: '0.00000000',
             panding: '0.00000000',
             totalPrice: '0.000000'
         }, {
+            key: Math.random(),
             coin: 'USDT(Tether USD)',
             available: '0.00000000',
             panding: '0.00000000',
             totalPrice: '0.000000'
         }, {
+            key: Math.random(),
             coin: 'CNC(Global China Cash)',
             available: '0.00000000',
             panding: '0.00000000',
             totalPrice: '0.000000'
         }, {
+            key: Math.random(),
             coin: 'BitCNY(BitCNY)',
             available: '0.00000000',
             panding: '0.00000000',
             totalPrice: '0.000000'
         }, {
+            key: Math.random(),
             coin: 'GAT(Global AEX Token)',
             available: '0.00000000',
             panding: '0.00000000',
             totalPrice: '0.000000'
         }, {
+            key: Math.random(),
             coin: 'ETH(Ethereum)',
             available: '0.00000000',
             panding: '0.00000000',
             totalPrice: '0.000000'
         }, {
+            key: Math.random(),
             coin: 'DOGE(Dogecoin)',
             available: '0.00000000',
             panding: '0.00000000',
             totalPrice: '0.000000'
         }, {
+            key: Math.random(),
             coin: 'LTC(Litecoin)',
             available: '0.00000000',
             panding: '0.00000000',
             totalPrice: '0.000000'
         }, {
+            key: Math.random(),
             coin: 'XRP(Ripple)',
             available: '0.00000000',
             panding: '0.00000000',
             totalPrice: '0.000000'
         }, {
+            key: Math.random(),
             coin: 'BTS(BitShares)',
             available: '0.00000000',
             panding: '0.00000000',
             totalPrice: '0.000000'
         }, {
+            key: Math.random(),
             coin: 'YOYO(YOYOW)',
             available: '0.00000000',
             panding: '0.00000000',
             totalPrice: '0.000000'
         }, {
+            key: Math.random(),
             coin: 'AE(Aeternity)',
             available: '0.00000000',
             panding: '0.00000000',
             totalPrice: '0.000000'
         }, {
+            key: Math.random(),
             coin: 'ARDR(Ardor)',
             available: '0.00000000',
             panding: '0.00000000',
             totalPrice: '0.000000'
         }, {
+            key: Math.random(),
             coin: 'ATN(AI Technology Network)',
             available: '0.00000000',
             panding: '0.00000000',
