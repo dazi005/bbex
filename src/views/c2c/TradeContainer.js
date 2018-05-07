@@ -170,7 +170,7 @@ class TradeContainer extends Component {
         var ws = new WebSocket(`${WS_ADDRESS}/bbex/websocket?${userId}`);
         ws.onopen = (evt) => {
             console.log("Connection open ...");
-            ws.send("Hello WebSockets!");
+            ws.send("Hello bbex!");
         };
 
         ws.onmessage = (evt) => {
