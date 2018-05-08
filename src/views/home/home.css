@@ -6,37 +6,6 @@
   top: -12px;
 }
 
-.scroll-notice {
-  position: relative;
-  height: 40px;
-  border-radius: 4px;
-  overflow: hidden;
-  box-shadow: rgba(35, 31, 32, 0.4) 0px 3px 7px 0px;
-  background-color: rgb(45, 52, 67);
-}
-.scroll-notice .iconfont {
-  position: absolute;
-  top: 50%;
-  left: 80px;
-  color: #d4a668;
-  transform: translateY(-45%);
-}
-.scroll-notice .ant-carousel {
-  width: 956px;
-  margin: 0 auto;
-}
-.scroll-notice a {
-  display: block;
-  line-height: 40px;
-  color: #a6b7d2;
-}
-.scroll-notice .notice-more {
-  position: absolute;
-  top: 50%;
-  right: 80px;
-  transform: translateY(-50%);
-}
-
 .coins-market {
   margin-top: 15px;
 }

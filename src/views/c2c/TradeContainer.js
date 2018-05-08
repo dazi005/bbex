@@ -166,42 +166,48 @@ class TradeContainer extends Component {
     }
 
     componentDidMount() {
-        const userId = JSON.parse(sessionStorage.getItem('account')).id;
-        var ws = new WebSocket(`${WS_ADDRESS}/bbex/websocket?${userId}`);
-        ws.onopen = (evt) => {
-            console.log("Connection open ...");
-            ws.send("Hello bbex!");
-        };
 
-        ws.onmessage = (evt) => {
-            const record = JSON.parse(evt.data);
-            if (record.id) {
-                let hasRecord = false;
-                const myOrderList = this.state.myOrderList.map(item => {
-                    if (record.subOrderId === item.subOrderId) {
+        //登录后才打开websockets
+        if (JSON.parse(sessionStorage.getItem('account'))) {
+            const userId = JSON.parse(sessionStorage.getItem('account')).id;
+            var ws = new WebSocket(`${WS_ADDRESS}/bbex/websocket?${userId}`);
+            ws.onopen = (evt) => {
+                console.log("Connection open ...");
+                ws.send("Hello bbex!");
+            };
+
+            ws.onmessage = (evt) => {
+                const record = JSON.parse(evt.data);
+                if (record.id) {
+                    let hasRecord = false;
+                    const myOrderList = this.state.myOrderList.map(item => {
+                        if (record.subOrderId === item.subOrderId) {
+                            record.key = record.id;
+                            hasRecord = true;
+                            return record;
+                        }
+                        return item;
+                    });
+                    if (!hasRecord) {
                         record.key = record.id;
-                        hasRecord = true;
-                        return record;
+                        myOrderList.push(record);
                     }
-                    return item;
-                });
-                if(!hasRecord) {
-                    record.key = record.id;
-                    myOrderList.push(record);
+                    this.setState({ myOrderList });
                 }
-                this.setState({ myOrderList });
-            }
-        };
+            };
 
-        ws.onclose = (evt) => {
-            console.log("Connection closed.");
-        };
+            ws.onclose = (evt) => {
+                console.log("Connection closed.");
+            };
 
-        this.setState({ ws });
+            this.setState({ ws });
+        }
     }
 
     componentWillUnmount() {
-        this.state.ws.close();
+        if (JSON.parse(sessionStorage.getItem('account'))) {
+            this.state.ws.close();
+        }
     }
 
     //根据币种和交易类型分页获取广告列表
@@ -428,7 +434,7 @@ class TradeContainer extends Component {
             method: 'GET',
         }).then(json => {
             if (json.code === 10000000) {
-                if(json.data) {
+                if (json.data) {
                     this.setState({ coinVolume: json.data.volume });
                 }
             } else {
@@ -891,7 +897,7 @@ class TradeContainer extends Component {
                             coin={coin}
                             exType={exType}
                             price={selectedCoin.price}
-                            volume={selectedCoin.volume-selectedCoin.lockVolume-selectedCoin.successVolume}
+                            volume={selectedCoin.volume - selectedCoin.lockVolume - selectedCoin.successVolume}
                             onSubmit={this.handleTransaction}
                         />
                     )}

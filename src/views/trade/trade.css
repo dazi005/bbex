@@ -1,0 +1,100 @@
+.content.trade {
+    padding: 0 0 20px;
+    background-color: rgb(51, 60, 75);
+}
+
+.trade-area {
+    margin-top: 20px;
+}
+.trade-left {
+    width: 230px;
+    margin-right: 10px;
+}
+.trade-center {
+    width: 640px;
+    margin-right: 10px;
+}
+.trade-right {
+    width: 310px;
+}
+
+.trade-plate {
+    margin-bottom: 10px;
+    color: #fff;
+    box-shadow: 0 0 15px #252b36;
+    background-color: #292f3d;
+}
+.trade-plate-header {
+    position: relative;
+    padding: 10px 20px;
+    line-height: 32px;
+    color: #d4a668;
+    border-bottom: 1px solid #d4a668;
+}
+.trade-plate-header a:link,
+.trade-plate-header a:visited{
+    color: #d4a668;
+}
+.trade-plate-header-right {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+.trade-plate-header-right .ant-input {
+    border: 1px solid #cfd2a6;
+    border-radius: 4px;
+    color: #fff;
+    background-color: #292f3d;
+}
+.trade-plate-header-right .ant-input-search-icon {
+    color: #cfd2a6;
+}
+.trade-plate-tit {
+    padding: 10px 0;
+    cursor: pointer;
+    border-bottom: 1px solid #3f4451;
+}
+.trade-plate-tit-cell {
+    display: inline-block;
+    width: 33.33%;
+    text-align: center;
+}
+.trade-plate-tit-cell .ant-table-column-sorter {
+    margin-left: 2px;
+}
+.trade-plate-tit-cell .ant-table-column-sorter .anticon-caret-up, 
+.trade-plate-tit-cell .ant-table-column-sorter .anticon-caret-down {
+    color: rgb(100, 93, 66);
+    font-size: 12px;
+}
+.trade-plate-container {
+    width: 100%;
+    height: 380px;
+}
+.trade-plate-container table {
+    width: 100%;
+}
+.trade-plate-container td {
+    width: 33.33%;
+    padding: 5px;
+    font-size: 12px;
+    text-align: center;
+}
+.trade-plate-container tr:hover{
+    background-color: #3f4657;
+}
+.trade-plate-container td:first-child {
+    padding-left: 10px;
+    text-align: left;
+}
+.trade-plate-container td .iconfont {
+    display: inline-block;
+    margin-top: -5px;
+    font-size: 18px;
+}
+.trade-plate-container td .icon-shoucang {
+    color: #585858;
+}
+.trade-plate-container td .icon-shoucang-active {
+    color: #d4a668;
+}
