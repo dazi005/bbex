@@ -451,6 +451,9 @@ a:hover {
 /* 广告条 */
 
 /* 下拉菜单 */
+.ant-dropdown {
+    border: 1px solid #6e6e6e;
+}
 .ant-dropdown-menu-item{
     padding: 10px 12px;
     color: #fff;
@@ -461,5 +464,19 @@ a:hover {
     background-color: #545861;
 }
 /* 下拉菜单 */
+
+.ant-btn-introduction,
+.ant-btn-introduction:hover {
+    height: 30px;
+    padding: 0 12px;
+    border: none;
+    line-height: 30px;
+    color: #c08b47;
+    background-color: rgb(52, 60, 76);
+    box-shadow: 0px 3px 7px 0px rgba(35, 31, 32, 0.7);
+}
+.ant-tooltip-inner {
+    padding: 8px 15px!important;
+}
 
 

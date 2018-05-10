@@ -200,6 +200,10 @@ class TradeContainer extends Component {
                 console.log("Connection closed.");
             };
 
+            ws.onerror = (evt) => {
+                console.log(evt);
+            }
+
             this.setState({ ws });
         }
     }
@@ -312,6 +316,9 @@ class TradeContainer extends Component {
         }).then(json => {
             if (json.code === 10000000) {
                 message.success('发布广告成功！');
+                //刷新广告列表
+                this.getAdvertList(this.state.current);
+                //刷新我发布的广告列表
                 this.getMyAdvertList();
             } else {
                 message.error(json.msg);

@@ -26,19 +26,23 @@
 }
 .trade-plate-header {
     position: relative;
-    padding: 10px 20px;
-    line-height: 32px;
-    color: #d4a668;
+    padding: 0 20px;
+    line-height: 52px;
     border-bottom: 1px solid #d4a668;
 }
 .trade-plate-header a:link,
-.trade-plate-header a:visited{
+.trade-plate-header a:visited,
+.trade-plate-header-text{
     color: #d4a668;
+}
+.trade-plate-header-price {
+    padding-left: 20px;
 }
 .trade-plate-header-right {
     position: absolute;
-    top: 10px;
+    top: 50%;
     right: 20px;
+    transform: translateY(-50%);
 }
 .trade-plate-header-right .ant-input {
     border: 1px solid #cfd2a6;
@@ -49,15 +53,54 @@
 .trade-plate-header-right .ant-input-search-icon {
     color: #cfd2a6;
 }
-.trade-plate-tit {
-    padding: 10px 0;
+.trade-plate-tab .iconfont {
+    display: inline-block;
+    width: 40px;
+    text-align: center;
+    color: #585858;
     cursor: pointer;
+}
+.trade-plate-tab .iconfont:hover,
+.trade-plate-tab .iconfont.active {
+    color: #d4a668;
+}
+.trade-plate-header-right .ant-select {
+    margin-left: 5px;
+}
+.trade-plate-header-right .ant-select .ant-select-selection {
+    border-color: #cfd2a6;
+    color: rgb(238, 238, 238);
+    font-size: 12px;
+    border-radius: 4px;
+    background-color: #252b36;
+}
+.trade-plate-header-right .ant-select .ant-select-arrow {
+    color: #cfd2a6;
+}
+
+.trade-plate-tit {
+    display: flex;
+    line-height: 42px;
+    font-size: 12px;
     border-bottom: 1px solid #3f4451;
 }
+.trade-plate-tit.cell-3 {
+    font-size: 14px;
+}
+.trade-plate-tit.Kline {
+    color: rgb(175, 163, 115);
+}
+.trade-plate-tit.Kline strong {
+    padding-left: 5px;
+    font-weight: bolder;
+}
 .trade-plate-tit-cell {
-    display: inline-block;
-    width: 33.33%;
+    flex: 1 1 auto;
+    flex-basis: 80px;
     text-align: center;
+}
+.trade-plate-tit-cell.sorter {
+    cursor: pointer;
 }
 .trade-plate-tit-cell .ant-table-column-sorter {
     margin-left: 2px;
@@ -71,15 +114,43 @@
     width: 100%;
     height: 380px;
 }
-.trade-plate-container table {
+.trade-plate-list {
+    height: 866px;
+}
+.trade-plate-container table,
+.trade-plate-list table {
     width: 100%;
 }
-.trade-plate-container td {
-    width: 33.33%;
+.trade-plate-container tr,
+.trade-plate-list tr {
+    display: flex;
+}
+.trade-plate-container td,
+.trade-plate-list td {
+    flex: 1 1 auto;
+    flex-basis: 80px;
     padding: 5px;
     font-size: 12px;
     text-align: center;
 }
+.trade-plate-list td {
+    padding: 4px 5px;
+}
+.trade-plate-list td:nth-child(1),
+.trade-plate-tit.list .trade-plate-tit-cell:nth-child(1) {
+    flex: 1 0 60px;
+}
+.trade-plate-list td:nth-child(2),
+.trade-plate-list td:nth-child(3),
+.trade-plate-tit.list .trade-plate-tit-cell:nth-child(2),
+.trade-plate-tit.list .trade-plate-tit-cell:nth-child(3) {
+    flex: 1 0 80px;
+}
+.trade-plate-list td:nth-child(4),
+.trade-plate-tit.list .trade-plate-tit-cell:nth-child(4) {
+    flex: 1 0 90px;
+}
+
 .trade-plate-container tr:hover{
     background-color: #3f4657;
 }
@@ -97,4 +168,71 @@
 }
 .trade-plate-container td .icon-shoucang-active {
     color: #d4a668;
+}
+
+/* tabs style */
+.trade-plate .ant-tabs-bar {
+    margin-bottom: 0;
+}
+.trade-plate .ant-tabs-nav .ant-tabs-tab {
+    padding: 0 16px;
+    height: 54px;
+    line-height: 53px;
+    color: #fff;
+}
+.trade-plate .ant-tabs-nav .ant-tabs-tab.ant-tabs-tab-active {
+    color: #d4a668;
+}
+.trade-plate .ant-tabs-nav .ant-tabs-tab .icon-web-icon- {
+    margin-left: 5px;
+    color: #fd3737;
+}
+.trade-plate .ant-tabs-content .ant-tabs-tabpane {
+    width: 100%;
+    height: 422px;
+    color: #fff;
+}
+
+/* 合并select框 */
+.merge-dropdown {
+    border: 1px solid #585858;
+    background-color: #252b36;
+}
+.ant-select-dropdown-menu-item {
+    color: #fff;
+    padding: 10px 12px;
+}
+.ant-select-dropdown-menu-item:hover, 
+.ant-select-dropdown-menu-item-selected{
+    color: #d4a668;
+    background-color: #434447;
+}
+
+/* 最新价 */
+.latest-price {
+    display: flex;
+    justify-content: space-around;
+    height: 40px;
+    margin: 10px;
+    line-height: 40px;
+    font-size: 18px;
+    background-color: #394354;
+}
+.latest-price .icon-xinhao {
+    padding-right: 10px;
+}
+.latest-price .icon-xinhao {
+    padding-right: 10px;
+}
+.latest-price span:last-child .iconfont {
+    font-size: 32px;
+}
+
+/* 表格 */
+.trade-plate .ant-table-thead > tr > th,
+.trade-plate .ant-table-tbody > tr > td,
+.trade-plate .ant-table-placeholder {
+    color: #fff;
+    border-bottom-color: #585858;
+    background-color: #343c4c;
 }
