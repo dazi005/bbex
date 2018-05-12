@@ -4,7 +4,7 @@ const datafeedConfig = (params) => {
   let { resolution, Datafeeds, serverUrl, pushInterval } = params;
 
   return {
-    debug: false,
+    debug: true,
     fullscreen: false,
     symbol: 'BTC/USDT',
     interval: resolution,
