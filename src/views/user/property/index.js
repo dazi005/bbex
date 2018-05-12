@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Tabs, Checkbox, Tooltip, Icon, Table, Button, Input, message, Modal } from 'antd';
+import Recharge from './Recharge';
+import Withdraw from './Withdraw';
 import request from '../../../utils/request';
 
 import './property.css';
@@ -20,16 +22,28 @@ class Property extends Component {
         handleCoin: null,
         handleVolume: 0,
         c2cData: null,
+        normalData: null,
+        expandedRowKey: "",
+        expendedFlag: ''
     }
 
     componentWillMount() {
-        this.getC2cData();
+        this.getNormalData();
     }
 
     inputVolume = (e) => {
         this.setState({ handleVolume: e.target.value });
     }
 
+    tabChange = (key) => {
+        if(key==="routine"){
+            this.getNormalData();
+        } else if(key==="c2c"){
+            this.getC2cData();
+        }else{
+
+        }
+    }
     getC2cData = () => {
         request('/offline/volume/list', {
             method: 'GET'
@@ -49,13 +63,53 @@ class Property extends Component {
             }
         })
     }
+    getNormalData =  () => {
+        request('/coin/volume/list', {
+            method: 'GET'
+        }).then(json => {
+            if (json.code === 10000000) {
+                const normalData = json.data.map((item)=>{
+                    let totalPrice = 0;
+                    let {id, name, volume, lockVolume, tokenStatus, withdrawFee, withdrawFeeType, withdrawMaxVolume } = item;
+                    volume = volume || '0.000000';
+                    lockVolume = lockVolume || '0.000000';
+                    totalPrice = (Number(volume) + Number(lockVolume)).toFixed(6)
+                   
+                    return {
+                        key: id,
+                        id,
+                        name,
+                        volume,
+                        lockVolume,
+                        totalPrice,
+                        tokenStatus,
+                        withdrawFee,
+                        withdrawFeeType,
+                        withdrawMaxVolume
+                    }
+                });
+                this.setState({normalData});
+            } else {
+                message.error(json.msg);
+            }
+        })
+    }
 
     handleZero = (e) => {
         console.log(e.target.checked);
     }
 
-    handleRecharge = () => {
-
+    handleRecharge = (record) => {
+        this.setState({
+            expandedRowKey: record.key,
+            expendedFlag: 'recharge'
+        });
+    }
+    handleWithdraw = (record) => {
+        this.setState({
+            expandedRowKey: record.key,
+            expendedFlag: 'withdraw'
+        });
     }
 
     triggerAction = ({ type, coin }) => {
@@ -130,117 +184,23 @@ class Property extends Component {
             handleCoin,
             handleVolume,
             c2cData,
+            normalData,
+            expandedRowKey,
+            expendedFlag
         } = this.state;
-
-        const routineData = [{
-            key: Math.random(),
-            coin: 'BTC(Bitcoin)',
-            available: '0.00000000',
-            panding: '0.00000000',
-            totalPrice: '0.000000'
-        }, {
-            key: Math.random(),
-            coin: 'USDT(Tether USD)',
-            available: '0.00000000',
-            panding: '0.00000000',
-            totalPrice: '0.000000'
-        }, {
-            key: Math.random(),
-            coin: 'CNC(Global China Cash)',
-            available: '0.00000000',
-            panding: '0.00000000',
-            totalPrice: '0.000000'
-        }, {
-            key: Math.random(),
-            coin: 'BitCNY(BitCNY)',
-            available: '0.00000000',
-            panding: '0.00000000',
-            totalPrice: '0.000000'
-        }, {
-            key: Math.random(),
-            coin: 'GAT(Global AEX Token)',
-            available: '0.00000000',
-            panding: '0.00000000',
-            totalPrice: '0.000000'
-        }, {
-            key: Math.random(),
-            coin: 'ETH(Ethereum)',
-            available: '0.00000000',
-            panding: '0.00000000',
-            totalPrice: '0.000000'
-        }, {
-            key: Math.random(),
-            coin: 'DOGE(Dogecoin)',
-            available: '0.00000000',
-            panding: '0.00000000',
-            totalPrice: '0.000000'
-        }, {
-            key: Math.random(),
-            coin: 'LTC(Litecoin)',
-            available: '0.00000000',
-            panding: '0.00000000',
-            totalPrice: '0.000000'
-        }, {
-            key: Math.random(),
-            coin: 'XRP(Ripple)',
-            available: '0.00000000',
-            panding: '0.00000000',
-            totalPrice: '0.000000'
-        }, {
-            key: Math.random(),
-            coin: 'BTS(BitShares)',
-            available: '0.00000000',
-            panding: '0.00000000',
-            totalPrice: '0.000000'
-        }, {
-            key: Math.random(),
-            coin: 'YOYO(YOYOW)',
-            available: '0.00000000',
-            panding: '0.00000000',
-            totalPrice: '0.000000'
-        }, {
-            key: Math.random(),
-            coin: 'AE(Aeternity)',
-            available: '0.00000000',
-            panding: '0.00000000',
-            totalPrice: '0.000000'
-        }, {
-            key: Math.random(),
-            coin: 'ARDR(Ardor)',
-            available: '0.00000000',
-            panding: '0.00000000',
-            totalPrice: '0.000000'
-        }, {
-            key: Math.random(),
-            coin: 'ATN(AI Technology Network)',
-            available: '0.00000000',
-            panding: '0.00000000',
-            totalPrice: '0.000000'
-        }]
 
         const routineColumns = [{
             title: '资金名称',
-            dataIndex: 'coin',
-            key: 'coin',
-            render: (text, record) => {
-                const type = text.split('(')[0].toLowerCase();
-                return <div>
-                    <span className={`currency-logo ${type}`}></span>{text}
-                </div>
-            },
+            dataIndex: 'name',
+            key: 'name',
         }, {
             title: '可用资金',
-            dataIndex: 'available',
-            key: 'available',
-            render: (text, record) => {
-                return <div className="available-col">
-                    <i className="iconfont icon-qianbao"></i> {text}
-                </div>
-            }
+            dataIndex: 'volume',
+            key: 'volume',
         }, {
             title: '挂单金额',
-            dataIndex: 'panding',
-            key: 'panding',
+            dataIndex: 'lockVolume',
+            key: 'lockVolume',
         }, {
             title: '总计',
             dataIndex: 'totalPrice',
@@ -251,24 +211,18 @@ class Property extends Component {
             key: 'action',
             render: (text, record) => (
                 <div className="property-action">
-                    <Button
+                    { (record.tokenStatus==1 || record.tokenStatus==2) && <Button
                         type="normal"
-                        onClick={this.handleRecharge}
+                        onClick={()=>{this.handleRecharge(record)}}
                     >
                         充币
-                    </Button>
-                    <Button
+                    </Button>}
+                    { (record.tokenStatus==1 || record.tokenStatus==3) && <Button
                         type="normal"
-                        onClick={this.handleWithdraw}
+                        onClick={()=>{this.handleWithdraw(record)}}
                     >
                         提币
-                    </Button>
-                    <Button
-                        type="normal"
-                        onClick={this.handleTrade}
-                    >
-                        交易
-                    </Button>
+                    </Button>}
                 </div>
             )
         }]
@@ -328,14 +282,14 @@ class Property extends Component {
 
         return (
             <div className="user-cont property pull-right">
-                <Tabs>
+                <Tabs defaultActiveKey="routine" onChange={this.tabChange}>
                     <TabPane tab="常规账户" key="routine">
                         <header className="property-header">
                             <h2 className="pull-left">
                                 我的资金一览表
                                 <Checkbox onChange={this.handleZero}>隱藏0余額</Checkbox>
                             </h2>
-                            <ul className="pull-right">
+                            {/* <ul className="pull-right">
                                 <li className="assets-estimate">資產估算：0.000000 BTC</li>
                                 <li>
                                     <span>
@@ -346,12 +300,23 @@ class Property extends Component {
                                     </span>
                                     <span>今日已用：0.000000BTC</span>
                                 </li>
-                            </ul>
+                            </ul> */}
                         </header>
                         <Table
-                            dataSource={routineData}
+                            dataSource={normalData}
                             columns={routineColumns}
                             pagination={false}
+                            expandedRowRender={(record)=>{ 
+                                
+                                if(expendedFlag==='recharge'){
+                                    return <Recharge {...record}/>
+                                }else if(expendedFlag==='withdraw'){
+                                    return <Withdraw {...record}/>
+                                }else {
+                                    
+                                }
+                            }}
+                            expandedRowKeys={[expandedRowKey]}
                         />
                     </TabPane>
                     <TabPane tab="C2C账户" key="c2c">

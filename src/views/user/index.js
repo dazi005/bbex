@@ -3,6 +3,8 @@ import { Route, NavLink, Switch } from 'react-router-dom';
 import Property from './property';
 import Verified from './verified';
 import Payment from './payment';
+import Transaction from './transaction';
+import Finance from './finance';
 import Popup from '../../components/popup';
 
 import './user.css';
@@ -98,12 +100,21 @@ class UserCenter extends Component {
                             >
                                 <i className="iconfont icon-zhifu"></i>支付绑定
                             </NavLink>
+                            <NavLink
+                                to={`${match.url}/address`}
+                                className="user-link"
+                                activeClassName="active"
+                            >
+                                <i className="iconfont icon-zhifu"></i>地址管理
+                            </NavLink>
                         </div>
                     </div>
                     <Switch>
                         <Route path={`${match.url}/`} exact component={Property} />
                         <Route path={`${match.url}/verified`} component={Verified} />
                         <Route path={`${match.url}/payment`} component={Payment} />
+                        <Route path={`${match.url}/transaction`} component={Transaction} />
+                        <Route path={`${match.url}/finance`} component={Finance} />
                     </Switch>
                 </div>
                 {popup}

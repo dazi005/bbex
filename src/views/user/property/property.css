@@ -81,3 +81,6 @@
     background-position: -15px -60px;
 }
 
+.user-cont  .ant-table-row-expand-icon{
+    display: none;
+}

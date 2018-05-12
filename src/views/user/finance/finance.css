@@ -1,0 +1,25 @@
+.recharge_record{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0;
+  font-size: 12px;
+}
+.recharge_record li{
+  flex: 2;
+}
+.recharge_record .operate{
+  text-align: right;
+}
+.recharge_item ul{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.recharge_item li{
+  width: 100%;
+  flex: 2;
+}
+.recharge_item  .operate{
+  text-align: right;
+}

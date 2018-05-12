@@ -1,0 +1,43 @@
+
+
+.wi_number{
+  position: relative;
+}
+.my_count{
+  display: flex;
+  justify-content: space-between;
+}
+.my_count li{
+  width: 45%;
+}
+.my_count .title{
+  line-height: 30px;
+}
+.my_count .money{
+  position: relative;
+}
+
+.my_count .number{
+  position: relative;
+}
+.my_count .money span, .my_count .number span{
+  position: absolute;
+  right: 10px;
+  top: 8px;
+}
+.btn_block{
+  display: flex;
+  justify-content: space-between;
+}
+.btn_block .btn{
+  width: 300px;
+  padding: 20px 0 0 20px;;
+}
+.withdraw_content .title{
+  line-height: 30px;
+}
+.withdraw_content .count_top{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}

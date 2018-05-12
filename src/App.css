@@ -482,3 +482,6 @@ a:hover {
 }
 
 
+.withdraw_content .ant-list-sm .ant-list-item{
+    padding: 2px 0;
+}

@@ -1,0 +1,14 @@
+.transation_content{
+  position: relative;
+}
+
+.transation_content .search{
+  position: absolute;
+  top: 0px;
+  right: 20px;
+  z-index: 100;
+}
+
+.transation_content .line{
+  padding: 0 6px;
+}
