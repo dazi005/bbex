@@ -440,10 +440,11 @@ a:hover {
     width: 80%;
     margin: 0 auto;
 }
-.scroll-notice a {
+.scroll-notice .notice-more {
     display: block;
     line-height: 40px;
     color: #a6b7d2;
+    cursor: pointer;
 }
 .scroll-notice .notice-more {
     position: absolute;
@@ -485,4 +486,7 @@ a:hover {
 
 .withdraw_content .ant-list-sm .ant-list-item{
     padding: 2px 0;
+}
+.bbex_notice .ant-list-header{
+    border-bottom: 0 !important;
 }
