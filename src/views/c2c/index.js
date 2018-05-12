@@ -42,7 +42,7 @@ class C2c extends Component {
         return (
             <div className="content c2c">
                 <div className="content-inner clear">
-                    <div className="side-bar pull-left">
+                    <div className="side-bar">
                         {['buy', 'sell'].map((exType, index) => {
                             return <ul key={exType} className="nav-item">
                                 <h2 className="nav-tit">

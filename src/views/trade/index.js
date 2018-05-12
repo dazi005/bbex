@@ -13,9 +13,9 @@ import {
 } from 'antd';
 import classnames from 'classnames';
 import Scrollbars from 'react-custom-scrollbars';
+import TradeBox from './TradeBox';
 
 import './trade.css';
-import { list } from 'postcss';
 
 const Search = Input.Search;
 const TabPane = Tabs.TabPane;
@@ -463,320 +463,345 @@ class Trade extends Component {
                         </Notice>
                         <a href="javascript:;" className="notice-more">更多>></a>
                     </div>
-                    <div className="trade-area clear">
-                        <div className="trade-left pull-left">
-                            <div className="trade-plate">
-                                <header className="trade-plate-header">
-                                    <Dropdown
-                                        overlay={(
-                                            <Menu onClick={this.switchMarket}>
-                                                <Menu.Item key="optional">自选</Menu.Item>
-                                                <Menu.Item key="BTC">BTC市场</Menu.Item>
-                                                <Menu.Item key="ETH">ETH市场</Menu.Item>
-                                                <Menu.Item key="BitCNY">BitCNY市场</Menu.Item>
-                                            </Menu>
-                                        )}
-                                    >
-                                        <a className="ant-dropdown-link" href="javascript:;">
-                                            {market === 'optional' ? '自选' : `${market}市场`}&nbsp;&nbsp;<Icon type="down" />
-                                        </a>
-                                    </Dropdown>
-                                    <div className="trade-plate-header-right">
-                                        <Search
-                                            onSearch={value => console.log(value)}
-                                            style={{ width: 80 }}
-                                        />
-                                    </div>
-                                </header>
-                                <div className="trade-plate-tit cell-3">
-                                    <div className="trade-plate-tit-cell">币种</div>
-                                    <div className="trade-plate-tit-cell sorter">
-                                        最新价
+                </div>
+                <div className="content-inner trade-area clear">
+                    <div className="trade-left">
+                        <div className="trade-plate">
+                            <header className="trade-plate-header">
+                                <Dropdown
+                                    overlay={(
+                                        <Menu onClick={this.switchMarket}>
+                                            <Menu.Item key="optional">自选</Menu.Item>
+                                            <Menu.Item key="BTC">BTC市场</Menu.Item>
+                                            <Menu.Item key="ETH">ETH市场</Menu.Item>
+                                            <Menu.Item key="BitCNY">BitCNY市场</Menu.Item>
+                                        </Menu>
+                                    )}
+                                >
+                                    <a className="ant-dropdown-link" href="javascript:;">
+                                        {market === 'optional' ? '自选' : `${market}市场`}&nbsp;&nbsp;<Icon type="down" />
+                                    </a>
+                                </Dropdown>
+                                <div className="trade-plate-header-right">
+                                    <Search
+                                        onSearch={value => console.log(value)}
+                                        style={{ width: 80 }}
+                                    />
+                                </div>
+                            </header>
+                            <div className="trade-plate-tit cell-3">
+                                <div className="trade-plate-tit-cell">币种</div>
+                                <div className="trade-plate-tit-cell sorter">
+                                    最新价
                                         <div className="ant-table-column-sorter">
-                                            <span className="ant-table-column-sorter-up off" title="↑">
-                                                <i className="anticon anticon-caret-up"></i>
-                                            </span>
-                                            <span className="ant-table-column-sorter-down off" title="↓">
-                                                <i className="anticon anticon-caret-down"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className="trade-plate-tit-cell sorter">
-                                        涨跌幅
-                                        <div className="ant-table-column-sorter">
-                                            <span className="ant-table-column-sorter-up off" title="↑">
-                                                <i className="anticon anticon-caret-up"></i>
-                                            </span>
-                                            <span className="ant-table-column-sorter-down off" title="↓">
-                                                <i className="anticon anticon-caret-down"></i>
-                                            </span>
-                                        </div>
+                                        <span className="ant-table-column-sorter-up off" title="↑">
+                                            <i className="anticon anticon-caret-up"></i>
+                                        </span>
+                                        <span className="ant-table-column-sorter-down off" title="↓">
+                                            <i className="anticon anticon-caret-down"></i>
+                                        </span>
                                     </div>
                                 </div>
-                                <div className="trade-plate-container">
-                                    <Scrollbars>
-                                        <table>
-                                            <tbody>
-                                                {marketData.map(coin => {
-                                                    const trend = coin.change.substr(0, 1) === '+' ? 'green' : 'red';
-                                                    return <tr
-                                                        key={coin.key}
-                                                        onClick={this.selectCoin.bind(this, coin)}
-                                                    >
-                                                        <td>
-                                                            <i className="iconfont icon-shoucang"></i>
-                                                            {coin.symbol}
-                                                        </td>
-                                                        <td>{coin.price}</td>
-                                                        <td className={`font-color-${trend}`}>{coin.change}</td>
-                                                    </tr>
-                                                })}
-                                            </tbody>
-                                        </table>
-                                    </Scrollbars>
+                                <div className="trade-plate-tit-cell sorter">
+                                    涨跌幅
+                                        <div className="ant-table-column-sorter">
+                                        <span className="ant-table-column-sorter-up off" title="↑">
+                                            <i className="anticon anticon-caret-up"></i>
+                                        </span>
+                                        <span className="ant-table-column-sorter-down off" title="↓">
+                                            <i className="anticon anticon-caret-down"></i>
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="trade-plate">
-                                <header className="trade-plate-header">
-                                    <span className="trade-plate-header-text">最新成交</span>
-                                </header>
-                                <div className="trade-plate-tit cell-3">
-                                    <div className="trade-plate-tit-cell">成交时间</div>
-                                    <div className="trade-plate-tit-cell">成交价格</div>
-                                    <div className="trade-plate-tit-cell">成交量</div>
-                                </div>
-                                <div className="trade-plate-container">
-                                    <Scrollbars>
-                                        <table>
-                                            <tbody>
-                                                {latestData.map((transaction, index) => {
-                                                    const trend = index % 2 === 0 ? 'red' : 'green';
-                                                    return <tr
-                                                        key={transaction.key}
-                                                        className={`font-color-${trend}`}
-                                                    >
-                                                        <td>{transaction.time}</td>
-                                                        <td>{transaction.price}</td>
-                                                        <td>{transaction.volume}</td>
-                                                    </tr>
-                                                })}
-                                            </tbody>
-                                        </table>
-                                    </Scrollbars>
-                                </div>
+                            <div className="trade-plate-container">
+                                <Scrollbars>
+                                    <table>
+                                        <tbody>
+                                            {marketData.map(coin => {
+                                                const trend = coin.change.substr(0, 1) === '+' ? 'green' : 'red';
+                                                return <tr
+                                                    key={coin.key}
+                                                    onClick={this.selectCoin.bind(this, coin)}
+                                                >
+                                                    <td>
+                                                        <i className="iconfont icon-shoucang"></i>
+                                                        {coin.symbol}
+                                                    </td>
+                                                    <td>{coin.price}</td>
+                                                    <td className={`font-color-${trend}`}>{coin.change}</td>
+                                                </tr>
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </Scrollbars>
                             </div>
                         </div>
-                        <div className="trade-center pull-left">
-                            <div className="trade-plate">
-                                <header className="trade-plate-header">
-                                    <Dropdown
-                                        overlay={(
-                                            <Menu onClick={this.jumpMarket}>
-                                                {[{
-                                                    marketName: 'BTC',
-                                                    pairPrice: '0.00000877',
-                                                    pairCNY: '￥0.54',
-                                                }, {
-                                                    marketName: 'BitCNY',
-                                                    pairPrice: '0.514',
-                                                    pairCNY: '￥0.54',
-                                                }, {
-                                                    marketName: 'ETH',
-                                                    pairPrice: '0.00010951',
-                                                    pairCNY: '￥0.54',
-                                                }].map(market => {
-                                                    return (
-                                                        <Menu.Item key={market.marketName}>
-                                                            {coinName}/{market.marketName} {market.pairPrice}/{market.pairCNY}
-                                                        </Menu.Item>
-                                                    )
-                                                })}
-                                            </Menu>
-                                        )}
-                                    >
-                                        <a className="ant-dropdown-link" href="javascript:;">
-                                            TRX/{marketName}&nbsp;&nbsp;<Icon type="down" />
-                                        </a>
-                                    </Dropdown>
-                                    <span className="trade-plate-header-price" dangerouslySetInnerHTML={{ __html: coinPrice }} />
-                                    <div className="trade-plate-header-right">
-                                        <Tooltip
-                                            placement="rightTop"
-                                            title={`波场TRON是全球最大的区块链去中心化应用操作系统,
+                        <div className="trade-plate">
+                            <header className="trade-plate-header">
+                                <span className="trade-plate-header-text">最新成交</span>
+                            </header>
+                            <div className="trade-plate-tit cell-3">
+                                <div className="trade-plate-tit-cell">成交时间</div>
+                                <div className="trade-plate-tit-cell">成交价格</div>
+                                <div className="trade-plate-tit-cell">成交量</div>
+                            </div>
+                            <div className="trade-plate-container">
+                                <Scrollbars>
+                                    <table>
+                                        <tbody>
+                                            {latestData.map((transaction, index) => {
+                                                const trend = index % 2 === 0 ? 'red' : 'green';
+                                                return <tr
+                                                    key={transaction.key}
+                                                    className={`font-color-${trend}`}
+                                                >
+                                                    <td>{transaction.time}</td>
+                                                    <td>{transaction.price}</td>
+                                                    <td>{transaction.volume}</td>
+                                                </tr>
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </Scrollbars>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="trade-center">
+                        <div className="trade-plate">
+                            <header className="trade-plate-header">
+                                <Dropdown
+                                    overlay={(
+                                        <Menu onClick={this.jumpMarket}>
+                                            {[{
+                                                marketName: 'BTC',
+                                                pairPrice: '0.00000877',
+                                                pairCNY: '￥0.54',
+                                            }, {
+                                                marketName: 'BitCNY',
+                                                pairPrice: '0.514',
+                                                pairCNY: '￥0.54',
+                                            }, {
+                                                marketName: 'ETH',
+                                                pairPrice: '0.00010951',
+                                                pairCNY: '￥0.54',
+                                            }].map(market => {
+                                                return (
+                                                    <Menu.Item key={market.marketName}>
+                                                        {coinName}/{market.marketName} {market.pairPrice}/{market.pairCNY}
+                                                    </Menu.Item>
+                                                )
+                                            })}
+                                        </Menu>
+                                    )}
+                                >
+                                    <a className="ant-dropdown-link" href="javascript:;">
+                                        TRX/{marketName}&nbsp;&nbsp;<Icon type="down" />
+                                    </a>
+                                </Dropdown>
+                                <span className="trade-plate-header-price" dangerouslySetInnerHTML={{ __html: coinPrice }} />
+                                <div className="trade-plate-header-right">
+                                    <Tooltip
+                                        placement="rightTop"
+                                        title={`波场TRON是全球最大的区块链去中心化应用操作系统,
                                             波场TRON以推动互联网去中心化为己任，
                                             致力于为去中心化互联网搭建基础设施。
                                             旗下的波场TRON协议是全球最大的基于区块链的去中心化应用操作系统协议之一，
                                             为协议上的去中心化应用运行提供高吞吐，高扩展，高可靠性的底层公链支持。`}
-                                        >
-                                            <Button type="introduction">币种介绍</Button>
-                                        </Tooltip>
-                                    </div>
-                                </header>
-                                <div className="trade-plate-tit Kline">
-                                    <div className="trade-plate-tit-cell">最高<strong>0.00000780</strong></div>
-                                    <div className="trade-plate-tit-cell">最高<strong>0.00000750</strong></div>
-                                    <div className="trade-plate-tit-cell">成交量<strong>44058464.3</strong></div>
-                                    <div className="trade-plate-tit-cell">涨跌幅<strong className="font-color-red">-0.13%</strong></div>
+                                    >
+                                        <Button type="introduction">币种介绍</Button>
+                                    </Tooltip>
                                 </div>
-                                <div className="trade-plate-container">
-
-                                </div>
+                            </header>
+                            <div className="trade-plate-tit Kline">
+                                <div className="trade-plate-tit-cell">最高<strong>0.00000780</strong></div>
+                                <div className="trade-plate-tit-cell">最高<strong>0.00000750</strong></div>
+                                <div className="trade-plate-tit-cell">成交量<strong>44058464.3</strong></div>
+                                <div className="trade-plate-tit-cell">涨跌幅<strong className="font-color-red">-0.13%</strong></div>
                             </div>
-                            <div className="trade-plate">
-                                <Tabs defaultActiveKey="1">
-                                    <TabPane tab="限价交易" key="1">Content of Tab Pane 1</TabPane>
-                                    <TabPane tab="市价交易" key="2">Content of Tab Pane 2</TabPane>
-                                    <TabPane tab={<span>
-                                        止盈质损
-                                        <Tooltip
-                                            placement="rightTop"
-                                            title={`当市场价达到触发价时，将按计划设定的价格和数量进行下单`}
-                                        >
-                                            <i className="iconfont icon-web-icon-" />
-                                        </Tooltip>
-                                    </span>} key="3">Content of Tab Pane 3</TabPane>
-                                </Tabs>
+                            <div className="trade-plate-container">
+
                             </div>
                         </div>
-                        <div className="trade-right pull-right">
-                            <div className="trade-plate">
-                                <header className="trade-plate-header">
-                                    <div className="trade-plate-tab">
-                                        {['icon-maimaipan', 'icon-maipan1', 'icon-maipan'].map((iconName, index) => {
-                                            const mapToTitle = {
-                                                'icon-maimaipan': 'buy and sell',
-                                                'icon-maipan1': 'buy',
-                                                'icon-maipan': 'sell',
-                                            }
-                                            return <i
-                                                key={iconName}
-                                                className={classnames({
-                                                    iconfont: true,
-                                                    [iconName]: true,
-                                                    active: listType === index
-                                                })}
-                                                title={mapToTitle[iconName]}
-                                                onClick={this.switchList.bind(this, index)}
-                                            />
-                                        })}
-                                    </div>
-                                    <div className="trade-plate-header-right">
-                                        合并
+                        <div className="trade-plate">
+                            <Tabs defaultActiveKey="1">
+                                <TabPane tab="限价交易" key="1">
+                                    <TradeBox
+                                        marketName={marketName}
+                                        coinName={coinName}
+                                        tradeType="limit"
+                                    />
+                                </TabPane>
+                                <TabPane tab="市价交易" key="2">
+                                    <TradeBox
+                                        marketName={marketName}
+                                        coinName={coinName}
+                                        tradeType="market"
+                                    />
+                                </TabPane>
+                                <TabPane
+                                    tab={
+                                        <span>
+                                            止盈止损
+                                                <Tooltip
+                                                placement="rightTop"
+                                                title={`当市场价达到触发价时，将按计划设定的价格和数量进行下单`}
+                                            >
+                                                <i className="iconfont icon-web-icon-" />
+                                            </Tooltip>
+                                        </span>
+                                    }
+                                    key="3"
+                                >
+                                    <TradeBox
+                                        marketName={marketName}
+                                        coinName={coinName}
+                                        tradeType="stop"
+                                    />
+                                </TabPane>
+                            </Tabs>
+                        </div>
+                    </div>
+                    <div className="trade-right">
+                        <div className="trade-plate">
+                            <header className="trade-plate-header">
+                                <div className="trade-plate-tab">
+                                    {['icon-maimaipan', 'icon-maipan1', 'icon-maipan'].map((iconName, index) => {
+                                        const mapToTitle = {
+                                            'icon-maimaipan': 'buy and sell',
+                                            'icon-maipan1': 'buy',
+                                            'icon-maipan': 'sell',
+                                        }
+                                        return <i
+                                            key={iconName}
+                                            className={classnames({
+                                                iconfont: true,
+                                                [iconName]: true,
+                                                active: listType === index
+                                            })}
+                                            title={mapToTitle[iconName]}
+                                            onClick={this.switchList.bind(this, index)}
+                                        />
+                                    })}
+                                </div>
+                                <div className="trade-plate-header-right">
+                                    合并
                                         <Select
-                                            defaultValue="8"
-                                            style={{ width: 100 }}
-                                            dropdownClassName="merge-dropdown"
-                                            onChange={this.handleMerge}
-                                        >
-                                            <Option value="8">8位小数</Option>
-                                            <Option value="6">6位小数</Option>
-                                            <Option value="4">4位小数</Option>
-                                        </Select>
-                                    </div>
-                                </header>
-                                {listType === 0 ? (
+                                        defaultValue="8"
+                                        style={{ width: 100 }}
+                                        dropdownClassName="merge-dropdown"
+                                        onChange={this.handleMerge}
+                                    >
+                                        <Option value="8">8位小数</Option>
+                                        <Option value="6">6位小数</Option>
+                                        <Option value="4">4位小数</Option>
+                                    </Select>
+                                </div>
+                            </header>
+                            {listType === 0 ? (
+                                <div className="trade-plate-tit list">
+                                    <div className="trade-plate-tit-cell">类型</div>
+                                    <div className="trade-plate-tit-cell">价格({marketName})</div>
+                                    <div className="trade-plate-tit-cell">数量({coinName})</div>
+                                    <div className="trade-plate-tit-cell">交易额({marketName})</div>
+                                </div>
+                            ) : (
                                     <div className="trade-plate-tit list">
-                                        <div className="trade-plate-tit-cell">类型</div>
-                                        <div className="trade-plate-tit-cell">价格({marketName})</div>
-                                        <div className="trade-plate-tit-cell">数量({coinName})</div>
+                                        <div className="trade-plate-tit-cell">{listType === 1 ? '买入' : '卖出'}</div>
+                                        <div className="trade-plate-tit-cell">{listType === 1 ? '买入' : '卖出'}价</div>
+                                        <div className="trade-plate-tit-cell">委单量</div>
                                         <div className="trade-plate-tit-cell">交易额({marketName})</div>
                                     </div>
-                                ) : (
-                                        <div className="trade-plate-tit list">
-                                            <div className="trade-plate-tit-cell">{listType === 1 ? '买入' : '卖出'}</div>
-                                            <div className="trade-plate-tit-cell">{listType === 1 ? '买入' : '卖出'}价</div>
-                                            <div className="trade-plate-tit-cell">委单量</div>
-                                            <div className="trade-plate-tit-cell">交易额({marketName})</div>
-                                        </div>
-                                    )}
-                                {listType === 0 ? (
-                                    <div className="trade-plate-list">
-                                        <table>
-                                            <tbody>
-                                                {buyData.map((record, index) => {
-                                                    return index < 15 && (
-                                                        <tr key={index}>
-                                                            <td className="font-color-red">卖出{15 - index}</td>
-                                                            <td>{record.price}</td>
-                                                            <td>{record.volume}</td>
-                                                            <td className="font-color-red">{record.totalPrice}</td>
-                                                        </tr>
-                                                    )
-                                                })}
-                                            </tbody>
-                                        </table>
-                                        <div className="latest-price">
-                                            <span>
-                                                <i className="iconfont icon-xinhao font-color-green" />最新价
+                                )}
+                            {listType === 0 ? (
+                                <div className="trade-plate-list">
+                                    <table>
+                                        <tbody>
+                                            {buyData.map((record, index) => {
+                                                return index < 15 && (
+                                                    <tr key={index}>
+                                                        <td className="font-color-red">卖出{15 - index}</td>
+                                                        <td>{record.price}</td>
+                                                        <td>{record.volume}</td>
+                                                        <td className="font-color-red">{record.totalPrice}</td>
+                                                    </tr>
+                                                )
+                                            })}
+                                        </tbody>
+                                    </table>
+                                    <div className="latest-price">
+                                        <span>
+                                            <i className="iconfont icon-xinhao font-color-green" />最新价
                                             </span>
-                                            <span className="font-color-red">
-                                                0.00229124 <i className="iconfont icon-xiajiang" />
-                                            </span>
-                                        </div>
-                                        <table>
-                                            <tbody>
-                                                {buyData.map((record, index) => {
-                                                    return index < 15 && (
-                                                        <tr key={index}>
-                                                            <td className="font-color-green">卖出{index + 1}</td>
-                                                            <td>{record.price}</td>
-                                                            <td>{record.volume}</td>
-                                                            <td className="font-color-green">{record.totalPrice}</td>
-                                                        </tr>
-                                                    )
-                                                })}
-                                            </tbody>
-                                        </table>
+                                        <span className="font-color-red">
+                                            0.00229124 <i className="iconfont icon-xiajiang" />
+                                        </span>
                                     </div>
-                                ) : (
-                                        <div className="trade-plate-list">
-                                            <Scrollbars>
-                                                <table>
-                                                    <tbody>
-                                                        {buyData.map((record, index) => {
-                                                            const colorName = listType === 1 ? 'green' : 'red';
-                                                            const actionName = listType === 1 ? '买入' : '卖出';
-                                                            return <tr key={index}>
-                                                                <td className={`font-color-${colorName}`}>{actionName}{index + 1}</td>
-                                                                <td>{record.price}</td>
-                                                                <td>{record.volume}</td>
-                                                                <td className={`font-color-${colorName}`}>{record.totalPrice}</td>
-                                                            </tr>
-                                                        })}
-                                                    </tbody>
-                                                </table>
-                                            </Scrollbars>
-                                        </div>
-                                    )}
-                            </div>
+                                    <table>
+                                        <tbody>
+                                            {buyData.map((record, index) => {
+                                                return index < 15 && (
+                                                    <tr key={index}>
+                                                        <td className="font-color-green">卖出{index + 1}</td>
+                                                        <td>{record.price}</td>
+                                                        <td>{record.volume}</td>
+                                                        <td className="font-color-green">{record.totalPrice}</td>
+                                                    </tr>
+                                                )
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ) : (
+                                    <div className="trade-plate-list">
+                                        <Scrollbars>
+                                            <table>
+                                                <tbody>
+                                                    {buyData.map((record, index) => {
+                                                        const colorName = listType === 1 ? 'green' : 'red';
+                                                        const actionName = listType === 1 ? '买入' : '卖出';
+                                                        return <tr key={index}>
+                                                            <td className={`font-color-${colorName}`}>{actionName}{index + 1}</td>
+                                                            <td>{record.price}</td>
+                                                            <td>{record.volume}</td>
+                                                            <td className={`font-color-${colorName}`}>{record.totalPrice}</td>
+                                                        </tr>
+                                                    })}
+                                                </tbody>
+                                            </table>
+                                        </Scrollbars>
+                                    </div>
+                                )}
                         </div>
                     </div>
-                    <div className="trade-plate">
-                        <Tabs defaultActiveKey="1">
-                            <TabPane tab="我的挂单" key="1">
-                                <Table
-                                    columns={pendingOrderColumns}
-                                    dataSource={null}
-                                    pagination={false}
-                                />
-                            </TabPane>
-                            <TabPane tab="全部委托" key="2">
-                                <Table
-                                    columns={pendingOrderColumns}
-                                    dataSource={null}
-                                    pagination={false}
-                                />
-                            </TabPane>
-                            <TabPane tab="成交历史" key="3">
-                                <Table
-                                    columns={pendingOrderColumns}
-                                    dataSource={null}
-                                    pagination={false}
-                                />
-                            </TabPane>
-                        </Tabs>
-                    </div>
                 </div>
+                <div className="content-inner">
+                        <div className="trade-plate">
+                            <Tabs defaultActiveKey="1">
+                                <TabPane tab="我的挂单" key="1">
+                                    <Table
+                                        columns={pendingOrderColumns}
+                                        dataSource={null}
+                                        pagination={false}
+                                    />
+                                </TabPane>
+                                <TabPane tab="全部委托" key="2">
+                                    <Table
+                                        columns={pendingOrderColumns}
+                                        dataSource={null}
+                                        pagination={false}
+                                    />
+                                </TabPane>
+                                <TabPane tab="成交历史" key="3">
+                                    <Table
+                                        columns={pendingOrderColumns}
+                                        dataSource={null}
+                                        pagination={false}
+                                    />
+                                </TabPane>
+                            </Tabs>
+                        </div>
+                    </div>
             </div>
         )
     }

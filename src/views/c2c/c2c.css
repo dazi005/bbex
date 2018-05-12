@@ -2,8 +2,9 @@
     padding: 20px 0 40px;
 }
 .side-bar {
-    width: 180px;
+    flex: 0 0 200px;
     height: 500px;
+    margin-right: 20px;
     color: #666;
     background-color: #fff;
 }
@@ -32,7 +33,7 @@
 }
 
 .trade-cont {
-    width: 1000px;
+    flex: 1 0 1000px;
 }
 
 .trade-list {

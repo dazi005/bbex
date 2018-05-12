@@ -757,7 +757,7 @@ class TradeContainer extends Component {
         }]
 
         return (
-            <div className="trade-cont pull-right">
+            <div className="trade-cont">
                 <div className="trade-list">
                     <div className="trade-list-header clear">
                         <div className="trade-index pull-left">

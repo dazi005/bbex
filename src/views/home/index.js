@@ -190,6 +190,8 @@ class Home extends Component {
                         </Notice>
                         <a href="javascript:;" className="notice-more">更多>></a>
                     </div>
+                </div>
+                <div className="content-inner">
                     <div className="coins-market">
                         <Tabs
                             tabBarExtraContent={searchBar}

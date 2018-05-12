@@ -7,18 +7,19 @@
     margin-top: 20px;
 }
 .trade-left {
-    width: 230px;
+    flex: 1 0 230px;
     margin-right: 10px;
 }
 .trade-center {
-    width: 640px;
+    flex: 1 0 640px;
     margin-right: 10px;
 }
 .trade-right {
-    width: 310px;
+    flex: 1 0 310px;
 }
 
 .trade-plate {
+    width: 100%;
     margin-bottom: 10px;
     color: #fff;
     box-shadow: 0 0 15px #252b36;
@@ -227,6 +228,7 @@
 .latest-price span:last-child .iconfont {
     font-size: 32px;
 }
+/* 最新价 */
 
 /* 表格 */
 .trade-plate .ant-table-thead > tr > th,
@@ -235,4 +237,137 @@
     color: #fff;
     border-bottom-color: #585858;
     background-color: #343c4c;
+}
+/* 表格 */
+
+/* trade-box */
+.trade-box {
+
+}
+.property-info {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+}
+.property-info .recharge-link {
+    display: inline-block;
+    margin-left: 60px;
+    padding: 10px 20px;
+    border: none;
+    color: #d4a668;
+    background-color: #343c4c;
+    box-shadow: 0 0 15px #252b36;
+}
+
+.trade-form {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 28px;
+}
+.trade-form-list {
+    width: 270px;
+}
+.trade-form li{
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px;
+    padding-left: 50px;
+}
+.trade-form li:nth-child(2n-1) {
+    margin-right: 40px;
+}
+.trade-form li .trade-form-name {
+    position: absolute;
+    top: 12px;
+    left: 0;
+    width: 50px;
+}
+.trade-form li .trade-form-name.market {
+    top: 44px;
+}
+.trade-form li .trade-form-marketName {
+    position: absolute;
+    top: 12px;
+    right: 45px;
+}
+.trade-form li .trade-form-coinName {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+}
+.trade-form li .trade-form-coinName.market {
+    top: 44px;
+}
+.trade-form li .trade-form-tips {
+    color: #cfd2a6;
+}
+.trade-form li .trade-form-txt {
+    display: flex;
+    justify-content: space-between;
+    width: 270;
+    margin: 10px 0 10px -50px;
+}
+.trade-form .ant-input-number,
+.trade-form .ant-input {
+    width: 220px;
+    height: 46px;
+    color: #fff;
+    border: 1px solid #cfd2a6;
+    background-color: #252b36;
+}
+.trade-form .ant-input-number-input {
+    height: 44px;
+    color: #fff;
+    background-color: #252b36;
+}
+.trade-form .ant-input-number-handler-wrap {
+    width: 30px;
+    background-color: #343c4c;
+}
+.trade-form .ant-input-number-handler {
+    text-align: center;
+}
+.trade-form .ant-input-number-handler-up-inner,
+.trade-form .ant-input-number-handler-down-inner {
+    right: 10px;
+    color: #fff;
+    font-size: 14px;
+}
+.trade-form .toCNY {
+    color: #999;
+}
+/* trade-box */
+
+/* slider */
+.trade-form .ant-slider-with-marks {
+    margin-bottom: 20px;
+}
+.trade-form .ant-slider-rail{
+    background-color: #434447;
+}
+.trade-form .ant-slider-dot {
+    top: -3px;
+    width: 10px;
+    height: 10px;
+    border-color: #585858;
+    background-color: #585858;
+}
+.trade-form .ant-slider-dot-active {
+    border-color: #cfd2a6;
+    background-color: #cfd2a6;
+}
+.trade-form .ant-slider-handle {
+    border: none;
+    box-shadow: 0 0 10px #fff, 0 0 10px #fff;
+}
+/* slider */
+
+
+.trade-form .trade-form-total {
+    width: 220px;
+    text-align: center;
+}
+.trade-form .ant-btn {
+    width: 220px;
+    margin-top: 10px;
 }
