@@ -5,7 +5,11 @@
   "dependencies": {
     "antd": "^3.4.1",
     "classnames": "^2.2.5",
+<<<<<<< HEAD
     "copy-to-clipboard": "^3.0.8",
+=======
+    "jquery": "^3.3.1",
+>>>>>>> e4c4c7d95640d7bc817512531fc47c176a68be41
     "qrcode.react": "^0.8.0",
     "react": "^16.3.1",
     "react-custom-scrollbars": "^4.2.1",

@@ -2,8 +2,9 @@
     padding: 20px 0 40px;
 }
 .user-bar {
-    width: 180px;
+    flex-basis: 200px;
     height: 500px;
+    margin-right: 20px;
     color: #666;
     background-color: #fff;
 }
@@ -44,12 +45,10 @@
 }
 
 .user-cont {
-    width: 1000px;
+    flex: 1 0 1000px;
     padding: 40px 30px;
     background-color: #fff;
 }
-
-
 
 .verification-popup {
     text-align: center;
