@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
-import { Tabs, Carousel as Notice, Input, Table } from 'antd';
+import { Link } from 'react-router-dom';
+import { Tabs, Carousel as Notice, Input, Table, message } from 'antd';
 import { Carousel } from 'react-responsive-carousel';
 import classnames from 'classnames';
+import { stampToDate } from '../../utils';
+import request from '../../utils/request';
 
 import './carousel.css';
 import './home.css';
-import banner1 from '../../assets/images/banner/2018042619461603135.jpg';
-import banner2 from '../../assets/images/banner/2018042619465659158.jpg';
-import banner3 from '../../assets/images/banner/2018042619471682022.jpg';
-import banner4 from '../../assets/images/banner/2018042619535967989.jpg';
 
 import partner1 from '../../assets/images/partner/bixin.png';
 import partner2 from '../../assets/images/partner/bi.png';
@@ -94,9 +93,49 @@ const data = [{
 class Home extends Component {
 
     state = {
+        banners: [],
+        notices: [],
         coinType: 'my',
         sortedInfo: null,
     };
+
+    componentWillMount() {
+        this.getBanner();
+        this.getNotice();
+    }
+
+    //获取banner图
+    getBanner = () => {
+        request('/cms/banner/list', {
+            method: 'GET',
+            body: {
+                language: "zh_CN"
+            }
+        }).then(json => {
+            if (json.code === 10000000) {
+                this.setState({ banners: json.data })
+            } else {
+                message.error(json.msg);
+            }
+        });
+    }
+
+    //获取公告
+    getNotice = () => {
+        request('/cms/notice/list', {
+            body: {
+                language: "zh_CN",
+                currentPage: 1,
+                showCount: 3,
+            }
+        }).then(json => {
+            if (json.code === 10000000) {
+                this.setState({ notices: json.data.list })
+            } else {
+                message.error(json.msg);
+            }
+        });
+    }
 
     handleSwitchTabs = (coinType) => {
         this.setState({ coinType })
@@ -114,9 +153,8 @@ class Home extends Component {
     }
 
     render() {
-        const banners = [banner1, banner2, banner3, banner4];
 
-        let { coinType, sortedInfo } = this.state;
+        let { banners, notices, coinType, sortedInfo } = this.state;
         coinType = coinType === 'my' ? '' : coinType;
         sortedInfo = sortedInfo || {};
         const columns = [{
@@ -130,7 +168,7 @@ class Home extends Component {
                     'name-wrap': true,
                     'attention': true
                 })}>
-                    <i 
+                    <i
                         className="iconfont icon-shoucang"
                         onClick={this.handleCollect}
                     ></i>
@@ -174,7 +212,16 @@ class Home extends Component {
                     showStatus={false}
                     showThumbs={false}
                 >
-                    {banners.map(banner => <img key={banner} src={banner} alt="" />)}
+                    {banners.length > 0 &&banners.map(banner => {
+                        const props = {
+                            target: banner.link && '_blank'
+                        }
+                        return (
+                            <Link key={banner.id} to={banner.link || banner.id} {...props}>
+                                <img key={banner.id} src={banner.image} alt="" />
+                            </Link>
+                        )
+                    })}
                 </Carousel>
                 <div className="content-inner">
                     <div className="scroll-notice">
@@ -184,9 +231,13 @@ class Home extends Component {
                             vertical
                             dots={false}
                         >
-                            <div><a href="javascript:;">CoinTiger系统维护公告&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2018-04-24 </a></div>
-                            <div><a href="javascript:;">CoinTiger将于4月26日上线CTXC的公告&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2018-04-24 </a></div>
-                            <div><a href="javascrip:;">CoinTiger将于5月4日16:00上线INC/BTC、INC/ETH交易对&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;018-04-26 </a></div>
+                            {notices.map(notice => {
+                                return (
+                                    <div key={notice.id}>
+                                        <Link to={`/notice/${notice.id}`}>{notice.title}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{stampToDate(Number(notice.createDate), 'YYYY-MM-DD')}</Link>
+                                    </div>
+                                )
+                            })}
                         </Notice>
                         <a href="javascript:;" className="notice-more">更多>></a>
                     </div>

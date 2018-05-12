@@ -115,7 +115,7 @@
     height: 380px;
 }
 .trade-plate-list {
-    height: 866px;
+    height: 865px;
 }
 .trade-plate-container table,
 .trade-plate-list table {
@@ -191,7 +191,7 @@
     width: 100%;
 }
 .trade-plate .ant-tabs-content .ant-tabs-tabpane {
-    height: 422px;
+    height: 423px;
     color: #fff;
 }
 
@@ -263,6 +263,7 @@
 
 .trade-form {
     position: relative;
+    margin-top: 20px;
     padding: 10px 28px;
 }
 .trade-form-list {

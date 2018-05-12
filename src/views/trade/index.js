@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import {
     Tabs,
     Carousel as Notice,
@@ -10,10 +11,14 @@ import {
     Tooltip,
     Button,
     Select,
+    message,
 } from 'antd';
 import classnames from 'classnames';
 import Scrollbars from 'react-custom-scrollbars';
+import request from '../../utils/request';
+import { stampToDate } from '../../utils';
 import TradeBox from './TradeBox';
+import TradeviewPage from '../../tradeview/TradeviewPage.jsx';
 
 import './trade.css';
 
@@ -22,12 +27,35 @@ const TabPane = Tabs.TabPane;
 const Option = Select.Option;
 
 class Trade extends Component {
+
     state = {
+        notices: [],
         market: 'BTC',
         marketName: 'BTC',
         coinName: 'TRX',
         coinPrice: '0.00000878 &asymp;￥0.54',
         listType: 0,
+    }
+
+    componentWillMount() {
+        this.getNotice();
+    }
+
+    //获取公告
+    getNotice = () => {
+        request('/cms/notice/list', {
+            body: {
+                language: "zh_CN",
+                currentPage: 1,
+                showCount: 3,
+            }
+        }).then(json => {
+            if (json.code === 10000000) {
+                this.setState({ notices: json.data.list })
+            } else {
+                message.error(json.msg);
+            }
+        });
     }
 
     // 切换市场
@@ -62,6 +90,7 @@ class Trade extends Component {
 
     render() {
         const {
+            notices,
             market,
             marketName,
             coinName,
@@ -457,9 +486,13 @@ class Trade extends Component {
                             vertical
                             dots={false}
                         >
-                            <div><a href="javascript:;">CoinTiger系统维护公告&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2018-04-24 </a></div>
-                            <div><a href="javascript:;">CoinTiger将于4月26日上线CTXC的公告&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2018-04-24 </a></div>
-                            <div><a href="javascrip:;">CoinTiger将于5月4日16:00上线INC/BTC、INC/ETH交易对&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;018-04-26 </a></div>
+                            {notices.map(notice => {
+                                return (
+                                    <div key={notice.id}>
+                                        <Link to={`/notice/${notice.id}`}>{notice.title}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{stampToDate(Number(notice.createDate), 'YYYY-MM-DD')}</Link>
+                                    </div>
+                                )
+                            })}
                         </Notice>
                         <a href="javascript:;" className="notice-more">更多>></a>
                     </div>
@@ -493,7 +526,7 @@ class Trade extends Component {
                                 <div className="trade-plate-tit-cell">币种</div>
                                 <div className="trade-plate-tit-cell sorter">
                                     最新价
-                                        <div className="ant-table-column-sorter">
+                                    <div className="ant-table-column-sorter">
                                         <span className="ant-table-column-sorter-up off" title="↑">
                                             <i className="anticon anticon-caret-up"></i>
                                         </span>
@@ -620,7 +653,7 @@ class Trade extends Component {
                                 <div className="trade-plate-tit-cell">涨跌幅<strong className="font-color-red">-0.13%</strong></div>
                             </div>
                             <div className="trade-plate-container">
-
+                                <TradeviewPage />
                             </div>
                         </div>
                         <div className="trade-plate">
@@ -639,7 +672,7 @@ class Trade extends Component {
                                         tradeType="market"
                                     />
                                 </TabPane>
-                                <TabPane
+                                {false && <TabPane
                                     tab={
                                         <span>
                                             止盈止损
@@ -658,7 +691,7 @@ class Trade extends Component {
                                         coinName={coinName}
                                         tradeType="stop"
                                     />
-                                </TabPane>
+                                </TabPane>}
                             </Tabs>
                         </div>
                     </div>
@@ -742,7 +775,7 @@ class Trade extends Component {
                                             {buyData.map((record, index) => {
                                                 return index < 15 && (
                                                     <tr key={index}>
-                                                        <td className="font-color-green">卖出{index + 1}</td>
+                                                        <td className="font-color-green">买入{index + 1}</td>
                                                         <td>{record.price}</td>
                                                         <td>{record.volume}</td>
                                                         <td className="font-color-green">{record.totalPrice}</td>
@@ -776,32 +809,32 @@ class Trade extends Component {
                     </div>
                 </div>
                 <div className="content-inner">
-                        <div className="trade-plate">
-                            <Tabs defaultActiveKey="1">
-                                <TabPane tab="我的挂单" key="1">
-                                    <Table
-                                        columns={pendingOrderColumns}
-                                        dataSource={null}
-                                        pagination={false}
-                                    />
-                                </TabPane>
-                                <TabPane tab="全部委托" key="2">
-                                    <Table
-                                        columns={pendingOrderColumns}
-                                        dataSource={null}
-                                        pagination={false}
-                                    />
-                                </TabPane>
-                                <TabPane tab="成交历史" key="3">
-                                    <Table
-                                        columns={pendingOrderColumns}
-                                        dataSource={null}
-                                        pagination={false}
-                                    />
-                                </TabPane>
-                            </Tabs>
-                        </div>
+                    <div className="trade-plate">
+                        <Tabs defaultActiveKey="1">
+                            <TabPane tab="我的挂单" key="1">
+                                <Table
+                                    columns={pendingOrderColumns}
+                                    dataSource={null}
+                                    pagination={false}
+                                />
+                            </TabPane>
+                            <TabPane tab="全部委托" key="2">
+                                <Table
+                                    columns={pendingOrderColumns}
+                                    dataSource={null}
+                                    pagination={false}
+                                />
+                            </TabPane>
+                            <TabPane tab="成交历史" key="3">
+                                <Table
+                                    columns={pendingOrderColumns}
+                                    dataSource={null}
+                                    pagination={false}
+                                />
+                            </TabPane>
+                        </Tabs>
                     </div>
+                </div>
             </div>
         )
     }
