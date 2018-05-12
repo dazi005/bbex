@@ -63,6 +63,16 @@ const C2c = Loadable({
   loading: Loading
 });
 
+const Detail = Loadable({
+  loader: () => import("./views/notice/Detail"),
+  loading: Loading
+})
+
+const Notice = Loadable({
+  loader: () => import("./views/notice"),
+  loading: Loading
+})
+
 const App = () => (
   <Router>
     <Container>
@@ -76,6 +86,8 @@ const App = () => (
         <Route path="/user" component={User} />
         <Route path="/authentication" component={Authentication} />
         <Route path="/c2c" component={C2c} />
+        <Route exact path="/notice" component={Notice} />
+        <Route path="/notice/:id" component={Detail} />
       </Switch>
     </Container>
   </Router>

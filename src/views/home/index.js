@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Tabs, Carousel as Notice, Input, Table, message } from 'antd';
 import { Carousel } from 'react-responsive-carousel';
 import classnames from 'classnames';
-import { stampToDate } from '../../utils';
+import NoticeBar from '../../components/noticeBar';
 import request from '../../utils/request';
 
 import './carousel.css';
@@ -94,14 +94,12 @@ class Home extends Component {
 
     state = {
         banners: [],
-        notices: [],
         coinType: 'my',
         sortedInfo: null,
     };
 
     componentWillMount() {
         this.getBanner();
-        this.getNotice();
     }
 
     //获取banner图
@@ -114,23 +112,6 @@ class Home extends Component {
         }).then(json => {
             if (json.code === 10000000) {
                 this.setState({ banners: json.data })
-            } else {
-                message.error(json.msg);
-            }
-        });
-    }
-
-    //获取公告
-    getNotice = () => {
-        request('/cms/notice/list', {
-            body: {
-                language: "zh_CN",
-                currentPage: 1,
-                showCount: 3,
-            }
-        }).then(json => {
-            if (json.code === 10000000) {
-                this.setState({ notices: json.data.list })
             } else {
                 message.error(json.msg);
             }
@@ -152,9 +133,10 @@ class Home extends Component {
         });
     }
 
+   
     render() {
 
-        let { banners, notices, coinType, sortedInfo } = this.state;
+        let { banners, coinType, sortedInfo } = this.state;
         coinType = coinType === 'my' ? '' : coinType;
         sortedInfo = sortedInfo || {};
         const columns = [{
@@ -224,23 +206,7 @@ class Home extends Component {
                     })}
                 </Carousel>
                 <div className="content-inner">
-                    <div className="scroll-notice">
-                        <i className="iconfont icon-notice"></i>
-                        <Notice
-                            autoplay
-                            vertical
-                            dots={false}
-                        >
-                            {notices.map(notice => {
-                                return (
-                                    <div key={notice.id}>
-                                        <Link to={`/notice/${notice.id}`}>{notice.title}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{stampToDate(Number(notice.createDate), 'YYYY-MM-DD')}</Link>
-                                    </div>
-                                )
-                            })}
-                        </Notice>
-                        <a href="javascript:;" className="notice-more">更多>></a>
-                    </div>
+                    <NoticeBar />
                 </div>
                 <div className="content-inner">
                     <div className="coins-market">
