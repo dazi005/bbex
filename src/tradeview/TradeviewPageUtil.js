@@ -22,6 +22,7 @@ const datafeedConfig = (params) => {
     },
     // autosize: true,
     "timezone": "Asia/Shanghai",
+    toolbar_bg: '#292f3d',
     disabled_features: [
       'header_symbol_search',
       'use_localstorage_for_settings',
