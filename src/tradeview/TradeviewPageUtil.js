@@ -45,8 +45,8 @@ const datafeedConfig = (params) => {
     client_id: 'tradingview.com',
     user_id: 'public_user_id',
     /*         time_frames: [
-              { text: "1min", resolution: "5s", description: "1 min" },
-              { text: "1h", resolution: "1", description: "1 hour" },
+              { text: "1m", resolution: "5s", description: "1 m" },
+              { text: "1h", resolution: "1", description: "1 h" },
               { text: "1d", resolution: "5", description: "1 Days" },
             ], */
     overrides: {//k线的颜色
@@ -89,53 +89,48 @@ const chartReady = (widget) => {
   let buttonArr = [
     {
       value: "1",
-      period: "1min",
+      period: "1m",
       text: "分时",
     },
     {
       value: "1",
-      period: "1min",
-      text: "1min",
+      period: "1m",
+      text: "1m",
     },
     {
       value: "5",
-      period: "5min",
-      text: "5min",
+      period: "5m",
+      text: "5m",
     },
     {
       value: "15",
-      period: "15min",
-      text: "15min",
+      period: "15m",
+      text: "15m",
     },
     {
       value: "30",
-      period: "30min",
-      text: "30min",
+      period: "30m",
+      text: "30m",
     },
     {
       value: "60",
-      period: "1hour",
-      text: "1hour",
+      period: "1h",
+      text: "1h",
     },
     {
       value: "120",
-      period: "2hour",
-      text: "2hour",
+      period: "2h",
+      text: "2h",
     },
     {
       value: "240",
-      period: "4hour",
-      text: "4hour",
+      period: "4h",
+      text: "4h",
     },
     {
-      value: "360",
-      period: "6hour",
-      text: "6hour",
-    },
-    {
-      value: "720",
-      period: "12hour",
-      text: "12hour",
+      value: "480",
+      period: "8h",
+      text: "8h",
     },
     {
       value: "1D",
@@ -146,6 +141,11 @@ const chartReady = (widget) => {
       value: "1W",
       period: "1W",
       text: "周线",
+    },
+    {
+      value: "1M",
+      period: "1M",
+      text: "月线",
     },
   ]
 

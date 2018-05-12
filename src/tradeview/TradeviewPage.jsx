@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Datafeeds from '../datafeed/datafeed.js';
 import tradeviewPageUtil from './TradeviewPageUtil';
-import "./TradeviewPage.scss";
 
 class TradeviewPage extends Component {
   constructor(props) {
