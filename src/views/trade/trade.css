@@ -96,8 +96,7 @@
     font-weight: bolder;
 }
 .trade-plate-tit-cell {
-    flex: 1 1 auto;
-    flex-basis: 80px;
+    flex: 1 1 80px;
     text-align: center;
 }
 .trade-plate-tit-cell.sorter {
@@ -128,8 +127,7 @@
 }
 .trade-plate-container td,
 .trade-plate-list td {
-    flex: 1 1 auto;
-    flex-basis: 80px;
+    flex: 1 0 80px;
     padding: 5px;
     font-size: 12px;
     text-align: center;
@@ -188,8 +186,11 @@
     margin-left: 5px;
     color: #fd3737;
 }
-.trade-plate .ant-tabs-content .ant-tabs-tabpane {
+.trade-plate .ant-tabs-content {
+    position: relative;
     width: 100%;
+}
+.trade-plate .ant-tabs-content .ant-tabs-tabpane {
     height: 422px;
     color: #fff;
 }
@@ -242,7 +243,8 @@
 
 /* trade-box */
 .trade-box {
-
+    position: relative;
+    width: 100%;
 }
 .property-info {
     display: flex;
@@ -260,12 +262,18 @@
 }
 
 .trade-form {
-    display: flex;
-    justify-content: space-between;
+    position: relative;
     padding: 10px 28px;
 }
 .trade-form-list {
-    width: 270px;
+   position: absolute;
+   top: 0;
+   left: 5%;
+   width: 270px;
+}
+.trade-form-list:last-child {
+    left: auto;
+    right: 5%;
 }
 .trade-form li{
     position: relative;
