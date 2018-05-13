@@ -376,6 +376,9 @@ a:hover {
     font-weight: normal;
 }
 
+.graphic-popup{
+    z-index: 100000 !important;
+}
 .graphic-popup .form-list,
 .graphic-popup .error-tip {
     width: 400px;
@@ -383,7 +386,7 @@ a:hover {
 }
 .inner-graphic {
     position: absolute;
-    top: 50%;
+    top: 30%;
     right: 1px;
     height: 30px;
     border-left: 1px solid #dfdfdf;
