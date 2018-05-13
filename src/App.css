@@ -426,6 +426,7 @@ a:hover {
     position: relative;
     height: 40px;
     width: 100%;
+    margin-top: 10px;
     border-radius: 4px;
     overflow: hidden;
     box-shadow: rgba(35, 31, 32, 0.4) 0px 3px 7px 0px;

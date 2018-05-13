@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Tabs,
-    Carousel as Notice,
     Input,
     Table,
     Menu,
@@ -31,18 +30,124 @@ class Trade extends Component {
 
     state = {
         market: 'BTC',
+        coinList: null,
         marketName: 'BTC',
-        coinName: 'TRX',
+        coinName: '',
+        tradeList: null,
+        streamList: null,
         coinPrice: '0.00000878 &asymp;￥0.54',
-        listType: 0,
+        listType: -1,
     }
 
-    componentWillMount() {
+    favoriteCoins = localStorage.getItem('favoriteCoins') ? JSON.parse(localStorage.getItem('favoriteCoins')) : [];
+
+    componentDidMount() {
+        this.getCoinList();
     }
+
+    componentWillUnmount() {
+        const { coinList } = this.state;
+        if (coinList) {
+            const favoriteCoins = [];
+            Object.keys(coinList).forEach(key => {
+                coinList[key].forEach(coin => {
+                    if (coin.favorite && !favoriteCoins.includes(`${coin.coinMain}.${coin.coinOther}`)) {
+                        favoriteCoins.push(`${coin.coinMain}.${coin.coinOther}`);
+                    }
+                });
+            });
+            localStorage.setItem('favoriteCoins', JSON.stringify(favoriteCoins));
+        }
+    }
+
+    // 获取币种列表
+    getCoinList = () => {
+        const { market } = this.state;
+        request('/index/allTradeExpair', {
+            method: 'GET'
+        }).then(json => {
+            if (json.code === 10000000) {
+                let coinList = {};
+                Object.keys(json.data).forEach(key => {
+                    const coins = json.data[key].map(coin => {
+                        if (this.favoriteCoins.includes(`${coin.coinMain}.${coin.coinOther}`)) {
+                            coin.favorite = true;
+                        }
+                        return coin;
+                    });
+                    coinList[key] = coins;
+                });
+                this.setState({
+                    coinList,
+                    coinName: json.data[market][0].coinOther
+                });
+                this.getStream({ 
+                    coinMain: market, 
+                    coinOther: json.data[market][0].coinOther
+                });
+            } else {
+                message.error(json.message);
+            }
+        });
+    }
+
+    // 获取交易列表
+    getTradeList = ({ marketName, coinName }) => {
+        request('/index/buyAndSellerOrder', {
+            method: 'GET',
+            body: {
+                coinMain: marketName,
+                coinOther: coinName,
+            }
+        }).then(json => {
+            if (json.code === 10000000) {
+                this.setState({ tradeList: json.data })
+            } else {
+                message.error(json.message);
+            }
+        });
+    }
+
+    // 获取流水记录
+    getStream = ({ coinMain, coinOther }) => {
+        request('/index/findMatchStream', {
+            method: 'GET',
+            body: { coinMain, coinOther }
+        }).then(json => {
+            if (json.code === 10000000) {
+                this.setState({ streamList: json.data })
+            } else {
+                message.error(json.message);
+            }
+        });
+    }
+
 
     // 切换市场
     switchMarket = (obj) => {
         this.setState({ market: obj.key });
+    }
+
+    // 收藏币种
+    collectCoin = (event, selectedCoin) => {
+        event.stopPropagation();
+
+        const { coinList } = this.state;
+        Object.keys(coinList).forEach(key => {
+            const coins = coinList[key].map(coin => {
+                if (selectedCoin.coinMain === coin.coinMain && selectedCoin.coinOther === coin.coinOther) {
+                    if (coin.favorite) {
+                        delete coin.favorite;
+                    } else {
+                        coin.favorite = true;
+                    }
+                }
+                return coin;
+            });
+            coinList[key] = coins;
+        });
+
+        this.setState({ coinList });
     }
 
     // 根据币种跳转市场
@@ -56,109 +161,92 @@ class Trade extends Component {
 
     // 选择币种
     selectCoin = (coin) => {
-        console.log(coin);
+        const { market } = this.state;
+        this.getTradeList({
+            marketName: market,
+            coinName: coin.coinOther
+        });
+        this.setState({
+            marketName: market,
+            coinName: coin.coinOther
+        });
     }
 
     // 按小数位数合并列表
     handleMerge = (value) => {
-        console.log('merge: ', value)
+        console.log('merge: ', value);
+        const { listType } = this.state;
+        if (listType === -1) {
+            this.requestMerge({
+                type: 0,
+                length: value
+            });
+            this.requestMerge({
+                type: 1,
+                length: value
+            });
+        } else {
+            this.requestMerge({
+                type: listType,
+                length: value
+            });
+        }
+    }
+
+    requestMerge = ({ type, length }) => {
+        const {
+            marketName,
+            coinName,
+        } = this.state;
+        request('/index/merge', {
+            method: 'GET',
+            body: {
+                coinMain: marketName,
+                coinOther: coinName,
+                type,
+                length,
+            }
+        }).then(json => {
+            if (json.code === 10000000) {
+                const { tradeList } = this.state;
+                if (type === 0) tradeList.buyOrderVOList = json.data.buyOrderVOList;
+                else tradeList.sellOrderVOList = json.data.sellOrderVOList;
+                this.setState({ tradeList });
+            } else {
+                message.error(json.message);
+            }
+        });
     }
 
     // 切换列表    
     switchList = (index) => {
         console.log('switch list:', index);
-        this.setState({ listType: index });
+        this.setState({ listType: (index - 1) });
     }
 
     render() {
         const {
             market,
+            coinList,
             marketName,
             coinName,
+            tradeList,
+            streamList,
             coinPrice,
             listType,
         } = this.state;
-        const marketData = [{
-            key: 1,
-            symbol: 'TCH',
-            price: '0.00000789',
-            change: '+2.47%'
-        }, {
-            key: 2,
-            symbol: 'STORJ',
-            price: '0.00000789',
-            change: '-2.47%'
-        }, {
-            key: 3,
-            symbol: 'LOOM',
-            price: '0.00000789',
-            change: '-2.47%'
-        }, {
-            key: 4,
-            symbol: 'HTML',
-            price: '0.00000789',
-            change: '+2.47%'
-        }, {
-            key: 5,
-            symbol: 'TCH',
-            price: '0.00000789',
-            change: '+2.47%'
-        }, {
-            key: 6,
-            symbol: 'LTC',
-            price: '0.00000789',
-            change: '-2.47%'
-        }, {
-            key: 7,
-            symbol: 'LOOM',
-            price: '0.00000789',
-            change: '-2.47%'
-        }, {
-            key: 8,
-            symbol: 'HTML',
-            price: '0.00000789',
-            change: '+2.47%'
-        }, {
-            key: 9,
-            symbol: 'TCH',
-            price: '0.00000789',
-            change: '+2.47%'
-        }, {
-            key: 10,
-            symbol: 'LTC',
-            price: '0.00000789',
-            change: '-2.47%'
-        }, {
-            key: 11,
-            symbol: 'LOOM',
-            price: '0.00000789',
-            change: '-2.47%'
-        }, {
-            key: 12,
-            symbol: 'HTML',
-            price: '0.00000789',
-            change: '+2.47%'
-        }, {
-            key: 13,
-            symbol: 'TCH',
-            price: '0.00000789',
-            change: '+2.47%'
-        }, {
-            key: 14,
-            symbol: 'LTC',
-            price: '0.00000789',
-            change: '-2.47%'
-        }, {
-            key: 15,
-            symbol: 'LOOM',
-            price: '0.00000789',
-            change: '-2.47%'
-        }, {
-            key: 16,
-            symbol: 'HTML',
-            price: '0.00000789',
-            change: '+2.47%'
-        }];
+
+        let pairList = [];
+        if (coinList) {
+            if (market === 'optional') {
+                Object.values(coinList).forEach(coins => {
+                    coins = coins.filter(coin => coin.favorite);
+                    Object.assign(pairList, coins);
+                });
+            } else {
+                pairList = coinList[market] || [];
+            }
+        }
 
         const latestData = [{
             key: 1,
@@ -237,188 +325,6 @@ class Trade extends Component {
             volume: '19.52'
         }];
 
-        const buyData = [{
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }, {
-            price: '0.00230541',
-            volume: '70.03',
-            totalPrice: '0.16144786'
-        }];
-
         const pendingOrderColumns = [{
             title: '委托时间',
             dataIndex: 'time',
@@ -427,10 +333,6 @@ class Trade extends Component {
             title: '委托类别',
             dataIndex: 'type',
             key: 'type',
-        }, {
-            title: '触发条件',
-            dataIndex: 'condition',
-            key: 'condition',
         }, {
             title: '委托价格',
             dataIndex: 'price',
@@ -448,14 +350,10 @@ class Trade extends Component {
             dataIndex: 'volume',
             key: 'volume',
         }, {
-            title: '平均成交价',
-            dataIndex: 'averagePrice',
-            key: 'averagePrice',
-        }, {
             title: '状态/操作',
             dataIndex: 'status&action',
             key: 'status&action',
-        }]
+        }];
 
         return (
             <div className="content trade">
@@ -469,10 +367,13 @@ class Trade extends Component {
                                 <Dropdown
                                     overlay={(
                                         <Menu onClick={this.switchMarket}>
-                                            <Menu.Item key="optional">自选</Menu.Item>
-                                            <Menu.Item key="BTC">BTC市场</Menu.Item>
-                                            <Menu.Item key="ETH">ETH市场</Menu.Item>
-                                            <Menu.Item key="BitCNY">BitCNY市场</Menu.Item>
+                                            {['optional', 'BTC', 'ETH', 'USDT'].map(market => {
+                                                return (
+                                                    <Menu.Item key={market}>
+                                                        {market === 'optional' ? '自选' : `${market}市场`}
+                                                    </Menu.Item>
+                                                )
+                                            })}
                                         </Menu>
                                     )}
                                 >
@@ -516,18 +417,28 @@ class Trade extends Component {
                                 <Scrollbars>
                                     <table>
                                         <tbody>
-                                            {marketData.map(coin => {
-                                                const trend = coin.change.substr(0, 1) === '+' ? 'green' : 'red';
+                                            {pairList.map(coin => {
+                                                const change = (coin.latestPrice - coin.firstPrice) / coin.firstPrice;
+                                                const trend = change > 0 ? 'green' : 'red';
                                                 return <tr
-                                                    key={coin.key}
+                                                    key={coin.coinOther}
                                                     onClick={this.selectCoin.bind(this, coin)}
                                                 >
                                                     <td>
-                                                        <i className="iconfont icon-shoucang"></i>
-                                                        {coin.symbol}
+                                                        <i
+                                                            className={classnames({
+                                                                'iconfont': true,
+                                                                'icon-shoucang': !coin.favorite,
+                                                                'icon-shoucang-active': coin.favorite,
+                                                            })}
+                                                            onClick={(event) => {
+                                                                this.collectCoin(event, coin)
+                                                            }}
+                                                        />
+                                                        {coin.coinOther}
                                                     </td>
-                                                    <td>{coin.price}</td>
-                                                    <td className={`font-color-${trend}`}>{coin.change}</td>
+                                                    <td>{coin.latestPrice}</td>
+                                                    <td className={`font-color-${trend}`}>{change.toFixed(2)}%</td>
                                                 </tr>
                                             })}
                                         </tbody>
@@ -548,15 +459,15 @@ class Trade extends Component {
                                 <Scrollbars>
                                     <table>
                                         <tbody>
-                                            {latestData.map((transaction, index) => {
-                                                const trend = index % 2 === 0 ? 'red' : 'green';
+                                            {streamList && streamList.map(stream => {
+                                                const trend = stream.type === 0 ? 'green' : 'red';
                                                 return <tr
-                                                    key={transaction.key}
+                                                    key={stream.key}
                                                     className={`font-color-${trend}`}
                                                 >
-                                                    <td>{transaction.time}</td>
-                                                    <td>{transaction.price}</td>
-                                                    <td>{transaction.volume}</td>
+                                                    <td>{stampToDate(Number(stream.date), 'hh:mm:ss')}</td>
+                                                    <td>{stream.price}</td>
+                                                    <td>{stream.volume}</td>
                                                 </tr>
                                             })}
                                         </tbody>
@@ -576,7 +487,7 @@ class Trade extends Component {
                                                 pairPrice: '0.00000877',
                                                 pairCNY: '￥0.54',
                                             }, {
-                                                marketName: 'BitCNY',
+                                                marketName: 'USDT',
                                                 pairPrice: '0.514',
                                                 pairCNY: '￥0.54',
                                             }, {
@@ -594,7 +505,7 @@ class Trade extends Component {
                                     )}
                                 >
                                     <a className="ant-dropdown-link" href="javascript:;">
-                                        TRX/{marketName}&nbsp;&nbsp;<Icon type="down" />
+                                        {coinName}/{marketName}&nbsp;&nbsp;<Icon type="down" />
                                     </a>
                                 </Dropdown>
                                 <span className="trade-plate-header-price" dangerouslySetInnerHTML={{ __html: coinPrice }} />
@@ -675,7 +586,7 @@ class Trade extends Component {
                                             className={classnames({
                                                 iconfont: true,
                                                 [iconName]: true,
-                                                active: listType === index
+                                                active: listType === (index - 1)
                                             })}
                                             title={mapToTitle[iconName]}
                                             onClick={this.switchList.bind(this, index)}
@@ -696,7 +607,7 @@ class Trade extends Component {
                                     </Select>
                                 </div>
                             </header>
-                            {listType === 0 ? (
+                            {listType === -1 ? (
                                 <div className="trade-plate-tit list">
                                     <div className="trade-plate-tit-cell">类型</div>
                                     <div className="trade-plate-tit-cell">价格({marketName})</div>
@@ -705,23 +616,23 @@ class Trade extends Component {
                                 </div>
                             ) : (
                                     <div className="trade-plate-tit list">
-                                        <div className="trade-plate-tit-cell">{listType === 1 ? '买入' : '卖出'}</div>
-                                        <div className="trade-plate-tit-cell">{listType === 1 ? '买入' : '卖出'}价</div>
+                                        <div className="trade-plate-tit-cell">{listType === 0 ? '买入' : '卖出'}</div>
+                                        <div className="trade-plate-tit-cell">{listType === 0 ? '买入' : '卖出'}价</div>
                                         <div className="trade-plate-tit-cell">委单量</div>
                                         <div className="trade-plate-tit-cell">交易额({marketName})</div>
                                     </div>
                                 )}
-                            {listType === 0 ? (
+                            {listType === -1 ? (
                                 <div className="trade-plate-list">
                                     <table>
                                         <tbody>
-                                            {buyData.map((record, index) => {
+                                            {tradeList && tradeList.buyOrderVOList.map((record, index) => {
                                                 return index < 15 && (
                                                     <tr key={index}>
                                                         <td className="font-color-red">卖出{15 - index}</td>
                                                         <td>{record.price}</td>
                                                         <td>{record.volume}</td>
-                                                        <td className="font-color-red">{record.totalPrice}</td>
+                                                        <td className="font-color-red">{record.sumTotal}</td>
                                                     </tr>
                                                 )
                                             })}
@@ -737,13 +648,13 @@ class Trade extends Component {
                                     </div>
                                     <table>
                                         <tbody>
-                                            {buyData.map((record, index) => {
+                                            {tradeList && tradeList.sellOrderVOList.map((record, index) => {
                                                 return index < 15 && (
                                                     <tr key={index}>
                                                         <td className="font-color-green">买入{index + 1}</td>
                                                         <td>{record.price}</td>
                                                         <td>{record.volume}</td>
-                                                        <td className="font-color-green">{record.totalPrice}</td>
+                                                        <td className="font-color-green">{record.sumTotal}</td>
                                                     </tr>
                                                 )
                                             })}
@@ -755,14 +666,14 @@ class Trade extends Component {
                                         <Scrollbars>
                                             <table>
                                                 <tbody>
-                                                    {buyData.map((record, index) => {
-                                                        const colorName = listType === 1 ? 'green' : 'red';
-                                                        const actionName = listType === 1 ? '买入' : '卖出';
+                                                    {tradeList && (listType === 1 ? tradeList.buyOrderVOList : tradeList.sellOrderVOList).map((record, index) => {
+                                                        const colorName = listType === 0 ? 'green' : 'red';
+                                                        const actionName = listType === 0 ? '买入' : '卖出';
                                                         return <tr key={index}>
                                                             <td className={`font-color-${colorName}`}>{actionName}{index + 1}</td>
                                                             <td>{record.price}</td>
                                                             <td>{record.volume}</td>
-                                                            <td className={`font-color-${colorName}`}>{record.totalPrice}</td>
+                                                            <td className={`font-color-${colorName}`}>{record.sumTotal}</td>
                                                         </tr>
                                                     })}
                                                 </tbody>

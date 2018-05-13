@@ -19,9 +19,10 @@ const ExpandComponent = ({
     onPreview,
     onCloseImage,
     confirmPay,
-    cancelPay
+    cancelPay,
+    confirmReceipt,
 }) => {
-    const { bankInfo, totalPrice, radomNum } = record;
+    const { bankInfo, totalPrice, radomNum, remarks, status } = record;
     return (
         <div className="payment-box">
             <Tabs tabBarExtraContent={
@@ -117,7 +118,9 @@ const ExpandComponent = ({
                 </TabPane>
             </Tabs>
             <div className="payment-box-action">
-                <Button type="primary" size="large" onClick={() => { confirmPay(record) }}>我已付款给卖家</Button>
+                {remarks === 'buy' && <Button type="primary" size="large" onClick={() => { confirmPay(record) }}>我已付款给卖家</Button>}
+                {remarks === 'sell' && status === 0 && <Button size="large" disabled>等待卖家确认付款</Button>}
+                {remarks === 'sell' && status === 1 && <Button type="primary" size="large" onClick={() => { confirmReceipt(record) }}>确认收款</Button>}
                 <Button type="normal" size="large" onClick={() => { cancelPay(record) }}>取消订单</Button>
             </div>
             <div className="payment-box-notice">
@@ -863,6 +866,7 @@ class TradeContainer extends Component {
                                             onCloseImage={this.handleCloseImage}
                                             confirmPay={this.confirmPay}
                                             cancelPay={this.cancelPay}
+                                            confirmReceipt={this.confirmReceipt}
                                         />
                                     ) : null
                                 )}

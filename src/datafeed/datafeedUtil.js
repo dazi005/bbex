@@ -79,7 +79,7 @@ const filteringTime = (time) => {
     case "1D":
       longTime = dayTime * 1;
       break;
-    case "D":
+    case "1W":
       longTime = dayTime * 7;
       break;
     default:
@@ -93,7 +93,7 @@ const transformTime = (time) => {
   let period = "";
   if (time.toString().indexOf('D') !== -1) {
     if (time === "D") {
-      period = "1W";
+      period = "1D";
     } else {
       let dayNumber = parseInt(time.split('W')[0]);
       period = `${dayNumber}D`;
@@ -115,5 +115,5 @@ export default {
   onWsMessage,
   dealWebsocket,
   filteringTime,
-  transformTime
+  transformTime,
 };

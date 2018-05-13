@@ -683,6 +683,7 @@ Datafeeds.SymbolsStorage.prototype._onAnyExchangeResponseReceived = function (ex
     this._datafeed._logMessage("All exchanges data ready");
     this._datafeed.onInitialized();
   }
+  
 };
 
 
