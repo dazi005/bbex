@@ -1,4 +1,12 @@
 .notice_detail{
-  padding: 20px;
-  
+  width: 100%;
+  padding: 30px;
+  min-height: 400px;
+  background-color: #2c3644;
+  color: #fff;
+  margin-top: 0;
+}
+.notice_detail div{
+  width: 100%;
+  text-align: center;
 }

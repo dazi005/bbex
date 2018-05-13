@@ -20,11 +20,10 @@ class Notice extends Component {
     
     this.getNotice(1, (list)=>{
       this.setState({loadingMore: false})
-      if(list.length===0){
+      if(list.length<10){
         this.setState({showLoadingMore: false})
-      } else{
-        this.setState({ notices: list});
-      }
+      } 
+      this.setState({ notices: list});
     });
   }
 
@@ -34,7 +33,7 @@ class Notice extends Component {
         body: {
             language: "zh_CN",
             currentPage: page,
-            showCount: 2,
+            showCount: 10,
         }
     }).then(json => {
         if (json.code === 10000000) {
@@ -58,11 +57,10 @@ class Notice extends Component {
     });
     this.getNotice(myPage, (list)=>{
       this.setState({loadingMore: false});
-      if(list.length===0){
+      if(list.length<10){
         this.setState({showLoadingMore: false})
-      } else {
-        this.setState({ notices: notices.concat(list)});
-      }
+      } 
+      this.setState({ notices: notices.concat(list)});
     })
   }
   render() {

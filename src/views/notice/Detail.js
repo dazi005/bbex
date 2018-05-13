@@ -29,7 +29,7 @@ class Detail extends Component {
   }
 
   render() {
-    return <div className="notice_detail">
+    return <div className="content-inner notice_detail">
       <div dangerouslySetInnerHTML={{__html: this.state.content}}/>
     </div>
   }

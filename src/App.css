@@ -63,6 +63,8 @@ a:hover {
 .nav-bar {
     float: left;
     margin-left: 10px;
+    margin-left: 0;
+    margin-bottom: 0;
 }
 .nav-bar li {
     float: left;
@@ -440,7 +442,7 @@ a:hover {
     width: 80%;
     margin: 0 auto;
 }
-.scroll-notice .notice-more {
+.scroll-notice .notice-more , .scroll-notice a{
     display: block;
     line-height: 40px;
     color: #a6b7d2;
@@ -451,6 +453,9 @@ a:hover {
     top: 50%;
     right: 80px;
     transform: translateY(-50%);
+}
+.scroll-notice .slick-list, .scroll-notice .slick-track, .scroll-notice .slick-slider{
+    height: 40px !important;
 }
 /* 广告条 */
 

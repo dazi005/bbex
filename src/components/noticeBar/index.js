@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import { Carousel as Notice, message } from 'antd';
+import { Carousel, message } from 'antd';
 import request from '../../utils/request';
 import { stampToDate } from '../../utils';
 
@@ -27,7 +27,9 @@ class NoticeBar extends Component {
             showCount: 3,
         }
     }).then(json => {
+      
         if (json.code === 10000000) {
+          
             this.setState({ notices: json.data.list })
         } else {
             message.error(json.msg);
@@ -36,22 +38,24 @@ class NoticeBar extends Component {
   }
 
   render() {
+    
     const { notices } = this.state;
     return <div className="scroll-notice">
         <i className="iconfont icon-notice"></i>
-        <Notice
-            autoplay
-            vertical
+        <Carousel
+            autoplay={true}
+            vertical={true}
             dots={false}
         >
             {notices.map(notice => {
+              
                 return (
                     <div key={notice.id}>
                         <Link to={`/notice/${notice.id}`}>{notice.title}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{stampToDate(Number(notice.createDate), 'YYYY-MM-DD')}</Link>
                     </div>
                 )
             })}
-        </Notice>
+        </Carousel>
         <span className="notice-more" onClick={this.moreNoticeClick} >更多>></span>
     </div>
   }
