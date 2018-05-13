@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Input, Select, List, Button, message } from 'antd';
+import { withRouter } from 'react-router-dom';
 import './withdraw.css';
 import request from '../../../utils/request';
 import Validate from './Validate';
@@ -14,8 +15,7 @@ class Withdraw extends Component {
     super(props);
     this.state = {
       addressHistory: [
-        "adjkadhjkzshd",
-        "aowuwoiueiowae"
+        
       ],
       myCoinCount: "",
       address:'',
@@ -40,7 +40,10 @@ class Withdraw extends Component {
             this.setState({popup: ''});
           }} okClick={()=>{
             this.setState({popup: ''});
-            // this.props.history.push();
+            const { name } = this.props;
+            const { myCoinCount, address} = this.state;
+
+            this.props.history.push("/user/status",{name, myCoinCount, address});
           }} getCode={()=>{
 
             this.setState({
@@ -107,7 +110,6 @@ class Withdraw extends Component {
     }
   }
 
-
   render(){
     const { id, name, volume, withdrawFee, withdrawFeeType, withdrawMaxVolume } = this.props;
     let { addressHistory, myCoinCount, address, fee } = this.state;
@@ -171,4 +173,4 @@ class Withdraw extends Component {
   }
 }
 
-export default Withdraw;
+export default withRouter(Withdraw);

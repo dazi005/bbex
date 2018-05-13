@@ -18,4 +18,5 @@
 .address_manger .btn_block{
   display: flex;
   justify-content: flex-end;
+  margin-bottom: 26px;
 }

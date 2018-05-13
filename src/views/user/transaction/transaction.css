@@ -4,9 +4,9 @@
 
 .transation_content .search{
   position: absolute;
-  top: 0px;
+  top: 40px;
   right: 20px;
-  z-index: 100;
+  z-index: 2;
 }
 
 .transation_content .line{

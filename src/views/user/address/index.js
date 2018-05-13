@@ -35,7 +35,7 @@ class Address extends Component {
         dataIndex: '',
         key: 'totalPrice',
     }]
-    return <div className="address_manger">
+    return <div className="address_manger user-cont">
       <ul >
         <li>
           <h4>币种</h4>

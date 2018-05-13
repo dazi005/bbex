@@ -15,11 +15,11 @@ class Transaction extends Component {
 
   }
   render() {
-    return <div className="transation_content">
+    return <div className="transation_content user-cont">
       <div className="search">
         <Input style={{width: 80, borderRadius: 4}}/>
         <span className="line">/</span>
-        <Select defaultValue="BTC" style={{ width: 80 , borderRadius: 4}} onChange={this.handleChange}>
+        <Select defaultValue="BTC" style={{ width: 100 , borderRadius: 4}} onChange={this.handleChange}>
           <Option value="BTC">BTC</Option>
           <Option value="USDT">USDT</Option>
         </Select>

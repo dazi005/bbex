@@ -1,0 +1,31 @@
+.order_status{
+  width: 100%;
+}
+.order_status h4{
+  font-size: 20px;
+  text-align: center;
+  line-height: 80px;
+}
+.order_status .step_block{
+  margin:  0 auto;
+  width: 70%;
+}
+
+.order_status .order_content{
+  width: 80%;
+  margin: 0 auto;
+  margin-top: 40px;
+}
+.order_status  li{
+  line-height: 50px;
+  display: flex;
+  font-size: 16px;
+  border-bottom: 1px solid #ddd;
+}
+.order_status .title{
+  padding-right: 12px;
+  font-size: 16px;
+  width: 100px;
+  color: #888;
+  text-align: right;
+}

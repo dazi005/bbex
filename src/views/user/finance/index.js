@@ -55,7 +55,7 @@ class Finance extends Component {
 
   render() {
     let { data } = this.state;
-    return <div className="finance_content">
+    return <div className="finance_content user-cont">
       <Tabs defaultActiveKey="1" onChange={this.tabChange}>
         <TabPane tab="充币记录" key="1">
           <List
