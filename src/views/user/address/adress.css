@@ -1,0 +1,21 @@
+.address_manger{
+  padding-right: 30px;
+  width: 100%;
+}
+.address_manger ul{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.address_manger .li_item{
+  flex: 1;
+  margin-left: 30px;
+}
+.address_manger h4{
+  line-height: 20px;
+  font-size: 12px;
+}
+.address_manger .btn_block{
+  display: flex;
+  justify-content: flex-end;
+}

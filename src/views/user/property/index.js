@@ -74,7 +74,7 @@ class Property extends Component {
                     volume = volume || '0.000000';
                     lockVolume = lockVolume || '0.000000';
                     totalPrice = (Number(volume) + Number(lockVolume)).toFixed(6)
-                   
+                    withdrawFee = withdrawFee || '0.000000';
                     return {
                         key: id,
                         id,
@@ -193,6 +193,12 @@ class Property extends Component {
             title: '资金名称',
             dataIndex: 'name',
             key: 'name',
+            render: (text, record) => {
+                const type = text.toLowerCase();
+                return <div>
+                    <span className={`currency-logo ${type}`}></span>{text}
+                </div>
+            },
         }, {
             title: '可用资金',
             dataIndex: 'volume',

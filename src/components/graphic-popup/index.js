@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { message } from 'antd';
 import Popup from '../popup';
 import request from '../../utils/request';
+import { IMAGES_ADDRESS }from '../../utils/constants';
 
 class GraphicPopup extends Component {
     state = {
@@ -90,7 +91,7 @@ class GraphicPopup extends Component {
                         />
                         {imgName && (
                             <img
-                                src={`http://images.bbex.one/image/view/${imgName}`}
+                                src={`${IMAGES_ADDRESS}/image/view/${imgName}`}
                                 className="inner-graphic"
                                 alt="图形验证码"
                                 onClick={this.getValidImg}

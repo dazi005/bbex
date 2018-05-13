@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { Form, Input, Select, List, Button } from 'antd';
+import { Form, Input, Select, List, Button, message } from 'antd';
 import './withdraw.css';
 import request from '../../../utils/request';
+import Validate from './Validate';
+import GraphicPopup from '../../../components/graphic-popup';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -12,46 +14,108 @@ class Withdraw extends Component {
     super(props);
     this.state = {
       addressHistory: [
-        "1231323232323",
-        "gsdjakhdksdhs"
+        "adjkadhjkzshd",
+        "aowuwoiueiowae"
       ],
-      coinNumber: '',
+      myCoinCount: "",
       address:'',
+      fee: 0,
+      popup: "",
+      vmodal: ''
     }
   }
 
+  closeModal = () =>{
+    this.setState({vmodal: ''})
+  }
+
   withdrawClick = () => {
-    const { id, name, volume } = this.props;
+    this.submitWithdraw((json)=>{
+      let mail = JSON.parse(sessionStorage.getItem('account')).mail;
+
+      if(json.code === 10000000) {
+        let id = json.data;
+        this.setState({
+          popup: <Validate id={id} cancelClick={()=>{
+            this.setState({popup: ''});
+          }} okClick={()=>{
+            this.setState({popup: ''});
+            // this.props.history.push();
+          }} getCode={()=>{
+
+            this.setState({
+              vmodal: <GraphicPopup
+                  mail={mail}
+                  type="withdraw"
+                  cancelHandle={this.closeModal}
+                  confirmHandle={this.closeModal}
+              >
+              </GraphicPopup>
+            })
+
+          }}/>
+        })
+      }else {
+        message.destroy();
+        message.info(json.msg);
+      }
+      
+    });
+    
+  }
+
+  submitWithdraw = (callback) => {
+    const { id, name } = this.props;
+    let { address, myCoinCount } = this.state;
     request('/coin/volume/withdraw', {
         method: 'POST',
         body: {
           coinId: id,
           symbol: name,
-          address: '',
-          volume: '',
+          address: address,
+          volume: myCoinCount,
         }
     }).then(json => {
-        console.log(json);
+        callback(json);
     })
   }
+  
   componentWillMount(){
     
     const { id, name, volume } = this.props;
     request('/coin/withdraw/address/list/'+id, {
         method: 'POST',
     }).then(json => {
-        console.log(json);
+
     })
   }
 
+  addressOnChange = (value) =>{
+    this.setState({address: value})
+  }
+
+  countChange = (e) => {
+    
+    let { withdrawFee, withdrawFeeType } = this.props;
+    this.setState({myCoinCount: e.target.value});
+    if(withdrawFeeType == 0) {
+
+    } else if(withdrawFeeType == 1){
+
+    } else {
+
+    }
+  }
+
+
   render(){
     const { id, name, volume, withdrawFee, withdrawFeeType, withdrawMaxVolume } = this.props;
-    const { addressHistory, coinNumber, address } = this.state;
-    console.log(addressHistory);
+    let { addressHistory, myCoinCount, address, fee } = this.state;
+
     return <div className="withdraw_content">
       <div className="title">提币地址</div>
       <div>
-        <Select style={{width: '100%'}} size="large" value={address} mode="combobox">
+        <Select style={{width: '100%'}} onChange={this.addressOnChange} size="large" value={address} mode="combobox">
           { addressHistory.map((item)=>{
             return <Option key={item} value={item}>{item}</Option>
           })}
@@ -59,9 +123,9 @@ class Withdraw extends Component {
       </div>
       <ul className="count_top">
         <li className="title">数量</li>
-        <li className="title">可用限额 {volume}  限额: 60000.0000</li>
+        <li className="title">可用限额 {volume}  限额: {withdrawMaxVolume}</li>
       </ul>
-      <Input placeholder="请输入数量" size="large"/>
+      <Input placeholder="请输入数量" onChange={this.countChange} value={myCoinCount} size="large" />
          
       <ul className="my_count">
         <li>
@@ -100,6 +164,9 @@ class Withdraw extends Component {
             <Button onClick={this.withdrawClick} type="primary" style={{width: 140,height: 50, borderRadius: 4}}>提币</Button>
         </div>
       </div>
+
+      { this.state.popup }
+      { this.state.vmodal }
     </div>
   }
 }
