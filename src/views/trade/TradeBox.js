@@ -11,34 +11,30 @@ class TradeBox extends Component {
             coinName,
         } = this.props;
 
-        return (
-            <div className="trade-box">
-                <div className="property-info">
-                    <span>
-                        {marketName} 可用 0.00000000
+        return ([
+            <div className="property-info">
+                <span>
+                    {marketName} 可用 0.00000000
                         {false && <Link className="recharge-link" to="#">充币</Link>}
-                    </span>
-                    <span>
-                        {coinName} 可用 0.00000000
+                </span>
+                <span>
+                    {coinName} 可用 0.00000000
                         {false && <Link className="recharge-link" to="#">充币</Link>}
-                    </span>
-                </div>
-                <div className="trade-form">
-                    <TradeForm 
-                        type="buy"
-                        tradeType={tradeType}
-                        marketName={marketName}
-                        coinName={coinName}
-                    />
-                    <TradeForm 
-                        type="sell"
-                        tradeType={tradeType}
-                        marketName={marketName}
-                        coinName={coinName}
-                    />
-                </div>
-            </div>
-        )
+                </span>
+            </div>,
+            <TradeForm
+                type="buy"
+                tradeType={tradeType}
+                marketName={marketName}
+                coinName={coinName}
+            />,
+            <TradeForm
+                type="sell"
+                tradeType={tradeType}
+                marketName={marketName}
+                coinName={coinName}
+            />
+        ])
     }
 }
 

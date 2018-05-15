@@ -191,6 +191,7 @@
     width: 100%;
 }
 .trade-plate .ant-tabs-content .ant-tabs-tabpane {
+    position: relative;
     height: 423px;
     color: #fff;
 }
@@ -241,15 +242,11 @@
 }
 /* 表格 */
 
-/* trade-box */
-.trade-box {
-    position: relative;
-    width: 100%;
-}
+/* trade-form */
 .property-info {
     display: flex;
     justify-content: space-around;
-    padding: 10px 0;
+    padding-top: 20px;
 }
 .property-info .recharge-link {
     display: inline-block;
@@ -262,17 +259,12 @@
 }
 
 .trade-form {
-    position: relative;
-    margin-top: 20px;
-    padding: 10px 28px;
-}
-.trade-form-list {
    position: absolute;
-   top: 0;
+   top: 70px;
    left: 5%;
-   width: 270px;
+   width: 42%;
 }
-.trade-form-list:last-child {
+.trade-form:last-child {
     left: auto;
     right: 5%;
 }
@@ -318,7 +310,7 @@
 }
 .trade-form .ant-input-number,
 .trade-form .ant-input {
-    width: 220px;
+    width: 100%;
     height: 46px;
     color: #fff;
     border: 1px solid #cfd2a6;
@@ -345,7 +337,7 @@
 .trade-form .toCNY {
     color: #999;
 }
-/* trade-box */
+/* trade-form */
 
 /* slider */
 .trade-form .ant-slider-with-marks {

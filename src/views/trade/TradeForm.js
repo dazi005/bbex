@@ -107,7 +107,7 @@ class TradeForm extends Component {
         }
 
         return (
-            <ul className="trade-form-list">
+            <ul className="trade-form">
                 {tradeType === 'stop' && (
                     <li>
                         <span className="trade-form-name">触发价</span>
