@@ -41,7 +41,7 @@ class C2c extends Component {
         const { currentType, currentCoin, coinList } = this.state;
         return (
             <div className="content c2c">
-                <div className="content-inner clear">
+                <div className="content-inner">
                     <div className="side-bar">
                         {['buy', 'sell'].map((exType, index) => {
                             return <ul key={exType} className="nav-item">

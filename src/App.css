@@ -463,21 +463,6 @@ a:hover {
 }
 /* 广告条 */
 
-/* 下拉菜单 */
-.ant-dropdown {
-    border: 1px solid #6e6e6e;
-}
-.ant-dropdown-menu-item{
-    padding: 10px 12px;
-    color: #fff;
-    background-color: #2d3443;
-}
-.ant-dropdown-menu-item:hover {
-    color: #d4a668;
-    background-color: #545861;
-}
-/* 下拉菜单 */
-
 .ant-btn-introduction,
 .ant-btn-introduction:hover {
     height: 30px;

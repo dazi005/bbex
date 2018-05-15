@@ -47,7 +47,7 @@ class Payment extends Component {
         
 
         return (
-            <div className="user-cont payment pull-right">
+            <div className="user-cont payment">
                 <h2 className="payment-tit">绑定支付方式</h2>
                 <div className={classnames({
                     'payment-cell': true,

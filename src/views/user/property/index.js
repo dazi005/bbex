@@ -287,7 +287,7 @@ class Property extends Component {
         }]
 
         return (
-            <div className="user-cont property pull-right">
+            <div className="user-cont property">
                 <Tabs defaultActiveKey="routine" onChange={this.tabChange}>
                     <TabPane tab="常规账户" key="routine">
                         <header className="property-header">

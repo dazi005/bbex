@@ -103,7 +103,7 @@ class Verified extends Component {
         const canSumbit = frontIdCard && backIdCard && handheldIdCard;
 
         return (
-            <div className="user-cont verified pull-right">
+            <div className="user-cont verified">
                 <Steps current={current}>
                     {['上传证件', '等待审核', '完成认证'].map(text => <Step key={text} title={text} />)}
                 </Steps>

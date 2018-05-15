@@ -52,8 +52,8 @@ class UserCenter extends Component {
         const account = JSON.parse(sessionStorage.getItem('account'));
         return (
             <div className="content user">
-                <div className="content-inner clear">
-                    <div className="user-bar pull-left">
+                <div className="content-inner">
+                    <div className="user-bar">
                         <div className="user-header">   
                             <div className="user-avatar">{account.realName ? account.realName.substr(0,1) : '?'}</div>
                             {account.mail}

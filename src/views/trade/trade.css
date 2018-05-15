@@ -200,12 +200,12 @@
     border: 1px solid #585858;
     background-color: #252b36;
 }
-.ant-select-dropdown-menu-item {
+.merge-dropdown .ant-select-dropdown-menu-item {
     color: #fff;
     padding: 10px 12px;
 }
-.ant-select-dropdown-menu-item:hover, 
-.ant-select-dropdown-menu-item-selected{
+.merge-dropdown .ant-select-dropdown-menu-item:hover, 
+.merge-dropdown .ant-select-dropdown-menu-item-selected{
     color: #d4a668;
     background-color: #434447;
 }
@@ -380,3 +380,18 @@
     width: 220px;
     margin-top: 10px;
 }
+
+/* 下拉菜单 */
+.content.trade .ant-dropdown {
+    border: 1px solid #6e6e6e;
+}
+.content.trade .ant-dropdown-menu-item{
+    padding: 10px 12px;
+    color: #fff;
+    background-color: #2d3443;
+}
+.content.trade .ant-dropdown-menu-item:hover {
+    color: #d4a668;
+    background-color: #545861;
+}
+/* 下拉菜单 */

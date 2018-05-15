@@ -376,6 +376,7 @@ class Trade extends Component {
                                             })}
                                         </Menu>
                                     )}
+                                    getPopupContainer={() => document.querySelector('.content.trade')}
                                 >
                                     <a className="ant-dropdown-link" href="javascript:;">
                                         {market === 'optional' ? '自选' : `${market}市场`}&nbsp;&nbsp;<Icon type="down" />
@@ -503,6 +504,7 @@ class Trade extends Component {
                                             })}
                                         </Menu>
                                     )}
+                                    getPopupContainer={() => document.querySelector('.content.trade')}
                                 >
                                     <a className="ant-dropdown-link" href="javascript:;">
                                         {coinName}/{marketName}&nbsp;&nbsp;<Icon type="down" />

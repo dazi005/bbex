@@ -2,9 +2,10 @@
     padding: 20px 0 40px;
 }
 .user-bar {
-    flex-basis: 200px;
-    height: 500px;
+    flex: 0 0 200px;
+    height: 530px;
     margin-right: 20px;
+    padding-bottom: 40px;
     color: #666;
     background-color: #fff;
 }
