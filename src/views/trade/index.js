@@ -463,7 +463,7 @@ class Trade extends Component {
                                             {streamList && streamList.map(stream => {
                                                 const trend = stream.type === 0 ? 'green' : 'red';
                                                 return <tr
-                                                    key={stream.key}
+                                                    key={stream.date}
                                                     className={`font-color-${trend}`}
                                                 >
                                                     <td>{stampToDate(Number(stream.date), 'hh:mm:ss')}</td>

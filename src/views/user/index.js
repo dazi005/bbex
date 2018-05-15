@@ -107,7 +107,7 @@ class UserCenter extends Component {
                                 className="user-link"
                                 activeClassName="active"
                             >
-                                <i className="iconfont icon-zhifu"></i>地址管理
+                                <i className="iconfont icon-navicon-fwdzpz"></i>地址管理
                             </NavLink>
                         </div>
                     </div>
