@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Tabs, Input, Select, Button } from 'antd';
+import { Tabs, Input, Select, Button, Table } from 'antd';
 import './transaction.css';
 
 const TabPane = Tabs.TabPane;
@@ -15,6 +15,7 @@ class Transaction extends Component {
 
   }
   render() {
+
     return <div className="transation_content user-cont">
       <div className="search">
         <Input style={{width: 80, borderRadius: 4}}/>

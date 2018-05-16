@@ -83,6 +83,44 @@ function copy(e) {
 
     try {
         document.execCommand('copy');
+        message.destroy();
+        message.success('复制成功!');
+    } catch (err) {
+        throw new Error('该浏览器不支持点击复制到剪贴板');
+    }
+    
+}
+
+function copyText(e) {
+    const ele = typeof e === 'string' ? document.querySelector(e) : e.currentTarget;
+
+    if(ele.value) {
+        ele.select();
+    }else {
+        const text = e.target.getAttribute("data-address");
+        const textArea = document.createElement("textarea");
+        textArea.style.position = 'fixed';
+        textArea.style.top = '0';
+        textArea.style.left = '0';
+        textArea.style.width = '2em';
+        textArea.style.height = '2em';
+        textArea.style.padding = '0';
+        textArea.style.border = 'none';
+        textArea.style.outline = 'none';
+        textArea.style.boxShadow = 'none';
+        textArea.style.background = 'transparent';
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+    
+        setTimeout(() => {
+            document.body.removeChild(textArea);
+        }, 200);
+    }
+
+    try {
+        document.execCommand('copy');
+        message.destroy();
         message.success('复制成功!');
     } catch (err) {
         throw new Error('该浏览器不支持点击复制到剪贴板');
@@ -95,4 +133,5 @@ export {
     stampToDate,
     dateToStamp,
     copy,
+    copyText
 }

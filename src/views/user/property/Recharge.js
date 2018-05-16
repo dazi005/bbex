@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { message } from 'antd';
 import QRCode from 'qrcode.react';
-import { copy } from '../../../utils/index';
+import { copyText } from '../../../utils/index';
 import request from '../../../utils/request';
 import './recharge.css';
 
@@ -31,8 +31,8 @@ class Recharge extends Component{
     return <div className="recharge_content">
       <div>充币地址</div>
       <ul className="address">
-        <li>{address}</li>
-        <li className="copy" onClick={copy}>复制</li>
+        <li id="re_address">{address}</li>
+        <li className="copy" data-address={address} onClick={copyText}>复制</li>
         <li className="ercode">
           <div className="text" onClick={()=>{
             this.setState({show: !show})
