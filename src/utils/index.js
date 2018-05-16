@@ -83,6 +83,7 @@ function copy(e) {
 
     try {
         document.execCommand('copy');
+        message.destroy();
         message.success('复制成功!');
     } catch (err) {
         throw new Error('该浏览器不支持点击复制到剪贴板');
