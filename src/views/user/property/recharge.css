@@ -5,20 +5,21 @@
   margin-top: 10px;
 }
 
-.address .copy{
+.recharge_content .address .copy{
   color: #d4a668;
   cursor: pointer;
   margin-left: 30px;
   margin-right: 60px;
 }
- .ercode{
+
+.recharge_content .ercode{
   position: relative;
 
 }
-.ercode .text{
+.recharge_content .ercode .text{
   cursor: pointer;
 }
-.ercode .ercon{
+.recharge_content .ercode .ercon{
   position: absolute;
   top: 30px;
   left: -40px;
