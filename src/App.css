@@ -386,12 +386,12 @@ a:hover {
 }
 .inner-graphic {
     position: absolute;
-    top: 30%;
+    top: 50%;
     right: 1px;
     height: 30px;
     border-left: 1px solid #dfdfdf;
-    transform: translateY(-50%);
     cursor: pointer;
+    transform: translateY(-50%);
 }
 
 .font-color-primary {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import Loadable from 'react-loadable';
 import Container from './views/Container';
 import Home from './views/home';
@@ -16,62 +16,78 @@ const Loading = ({ isLoading, error }) => {
   // Handle the error state
   else if (error) {
     return <div>Sorry, there was a problem loading the page.</div>;
-  }
-
-  else {
+  } else {
     return null;
   }
 };
 
 const Trade = Loadable({
-  loader: () => import("./views/trade"),
+  loader: () => import('./views/trade'),
   loading: Loading
 });
 
 const Signin = Loadable({
-  loader: () => import("./views/signin"),
+  loader: () => import('./views/signin'),
   loading: Loading
 });
 
 const Register = Loadable({
-  loader: () => import("./views/register"),
+  loader: () => import('./views/register'),
   loading: Loading
 });
 
 const Reset = Loadable({
-  loader: () => import("./views/reset"),
+  loader: () => import('./views/reset'),
   loading: Loading
 });
 
 const ResetPassword = Loadable({
-  loader: () => import("./views/reset/Password"),
+  loader: () => import('./views/reset/Password'),
   loading: Loading
 });
 
 const User = Loadable({
-  loader: () => import("./views/user"),
+  loader: () => import('./views/user'),
   loading: Loading
 });
 
 const Authentication = Loadable({
-  loader: () => import("./views/authentication"),
+  loader: () => import('./views/authentication'),
   loading: Loading
 });
 
 const C2c = Loadable({
-  loader: () => import("./views/c2c"),
+  loader: () => import('./views/c2c'),
   loading: Loading
 });
 
 const Detail = Loadable({
-  loader: () => import("./views/notice/Detail"),
+  loader: () => import('./views/notice/Detail'),
   loading: Loading
-})
+});
 
 const Notice = Loadable({
-  loader: () => import("./views/notice"),
+  loader: () => import('./views/notice'),
   loading: Loading
-})
+});
+
+const NotFound = Loadable({
+  loader: () => import('./views/404'),
+  loading: Loading
+});
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props =>
+      sessionStorage.getItem('account') ? (
+        <Component {...props} />
+      ) : (
+        <Redirect to="/signin" />
+      )
+    }
+  />
+);
 
 const App = () => (
   <Router>
@@ -83,11 +99,12 @@ const App = () => (
         <Route path="/register" component={Register} />
         <Route path="/reset" component={Reset} />
         <Route path="/resetPassword" component={ResetPassword} />
-        <Route path="/user" component={User} />
-        <Route path="/authentication" component={Authentication} />
+        <PrivateRoute path="/user" component={User} />
+        <PrivateRoute path="/authentication" component={Authentication} />
         <Route path="/c2c" component={C2c} />
         <Route exact path="/notice" component={Notice} />
         <Route path="/notice/:id" component={Detail} />
+        <Route path="*" component={NotFound} />
       </Switch>
     </Container>
   </Router>

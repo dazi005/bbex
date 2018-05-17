@@ -9,12 +9,12 @@ class SubmitRest extends Component {
         password: '',
         repassword: '',
         errorTip: '',
-        resetSuccess: false,
-    }
+        resetSuccess: false
+    };
 
-    inputValue = (e) => {
+    inputValue = e => {
         this.setState({ [e.target.id]: e.target.value });
-    }
+    };
 
     reset = () => {
         const { password, repassword } = this.state;
@@ -22,27 +22,22 @@ class SubmitRest extends Component {
             request('/user/resetPassword', {
                 body: {
                     password: this.state.password,
-                    ptoken: this.state.ptoken,
+                    ptoken: this.state.ptoken
                 }
             }).then(json => {
                 if (json.code === 10000000) {
                     this.setState({ resetSuccess: true });
-                }else {
+                } else {
                     this.setState({ errorTip: '该链接已经失效' });
                 }
             });
         } else {
             this.setState({ errorTip: '两次密码输入不一致！' });
         }
-    }
+    };
 
     render() {
-        const {
-            password,
-            repassword,
-            errorTip,
-            resetSuccess,
-        } = this.state;
+        const { password, repassword, errorTip, resetSuccess } = this.state;
         const ok = password && repassword;
         return (
             <div className="content">
@@ -57,21 +52,53 @@ class SubmitRest extends Component {
                         </ul>
                     </div>
                 ) : (
-                        <div className="form-box">
-                            <h1>重置密码</h1>
-                            <p className="error-tip">{errorTip && <i className="iconfont icon-zhuyishixiang"></i>}{errorTip}</p>
-                            <ul className="form-list">
-                                <li><i className="iconfont icon-youxiang"></i><input type="password" className="text" id="password" value={password} onChange={this.inputValue} placeholder="新密码" /></li>
-                                <li><i className="iconfont icon-youxiang"></i><input type="password" className="text" id="repassword" value={repassword} onChange={this.inputValue} placeholder="确认密码" /></li>
-                                <li><input type="submit" className={classnames({
-                                    button: true,
-                                    disabled: !ok
-                                })} onClick={this.reset} value="确定" /></li>
-                            </ul>
-                        </div>
-                    )}
+                    <div className="form-box">
+                        <h1>重置密码</h1>
+                        <p className="error-tip">
+                            {errorTip && (
+                                <i className="iconfont icon-zhuyishixiang" />
+                            )}
+                            {errorTip}
+                        </p>
+                        <ul className="form-list">
+                            <li>
+                                <i className="iconfont icon-youxiang" />
+                                <input
+                                    type="password"
+                                    className="text"
+                                    id="password"
+                                    value={password}
+                                    onChange={this.inputValue}
+                                    placeholder="新密码"
+                                />
+                            </li>
+                            <li>
+                                <i className="iconfont icon-youxiang" />
+                                <input
+                                    type="password"
+                                    className="text"
+                                    id="repassword"
+                                    value={repassword}
+                                    onChange={this.inputValue}
+                                    placeholder="确认密码"
+                                />
+                            </li>
+                            <li>
+                                <input
+                                    type="submit"
+                                    className={classnames({
+                                        button: true,
+                                        disabled: !ok
+                                    })}
+                                    onClick={this.reset}
+                                    value="确定"
+                                />
+                            </li>
+                        </ul>
+                    </div>
+                )}
             </div>
-        )
+        );
     }
 }
 
