@@ -44,11 +44,6 @@ class TradeForm extends Component {
             sell: "sellOut"
         };
 
-        const mapTypeToText = {
-            buy: "买入",
-            sell: "卖出"
-        };
-
         request(`/trade/${mapTypeToAction[type]}`, {
             body: {
                 orderNo,
@@ -61,7 +56,7 @@ class TradeForm extends Component {
         }).then(json => {
             if (json.code === 10000000) {
                 console.log(json.data);
-                message.success(`${mapTypeToText[type]}成功！`);
+                message.success(`挂单成功！`);
             } else {
                 message.error(json.message);
             }

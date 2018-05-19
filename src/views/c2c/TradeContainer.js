@@ -173,7 +173,7 @@ class TradeContainer extends Component {
         //登录后才打开websockets
         if (JSON.parse(sessionStorage.getItem('account'))) {
             const userId = JSON.parse(sessionStorage.getItem('account')).id;
-            var ws = new WebSocket(`${WS_ADDRESS}/bbex/websocket?${userId}`);
+            var ws = new window.ReconnectingWebSocket(`${WS_ADDRESS}/bbex/websocket?${userId}`);
             ws.onopen = (evt) => {
                 console.log("Connection open ...");
                 ws.send("Hello bbex!");
