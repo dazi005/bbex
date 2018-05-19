@@ -66,7 +66,7 @@ class UserCenter extends Component {
             </div>
             <div className="user-nav">
               <NavLink
-                to={`${match.url}`}
+                to={`${match.path}`}
                 exact
                 className="user-link"
                 activeClassName="active"
@@ -74,42 +74,42 @@ class UserCenter extends Component {
                 <i className="iconfont icon-zichan" />我的资产
               </NavLink>
               <NavLink
-                to={`${match.url}/transaction`}
+                to={`${match.path}/transaction`}
                 className="user-link"
                 activeClassName="active"
               >
                 <i className="iconfont icon-jiaoyi" />我的交易
               </NavLink>
               <NavLink
-                to={`${match.url}/finance`}
+                to={`${match.path}/finance`}
                 className="user-link"
                 activeClassName="active"
               >
                 <i className="iconfont icon-caiwu" />财务记录
               </NavLink>
               <NavLink
-                to={`${match.url}/security`}
+                to={`${match.path}/security`}
                 className="user-link"
                 activeClassName="active"
               >
                 <i className="iconfont icon-anquanzhongxin" />安全中心
               </NavLink>
               <NavLink
-                to={`${match.url}/verified`}
+                to={`${match.path}/verified`}
                 className="user-link"
                 activeClassName="active"
               >
                 <i className="iconfont icon-shimingrenzheng" />实名认证
               </NavLink>
               <NavLink
-                to={`${match.url}/payment`}
+                to={`${match.path}/payment`}
                 className="user-link"
                 activeClassName="active"
               >
                 <i className="iconfont icon-zhifu" />支付绑定
               </NavLink>
               <NavLink
-                to={`${match.url}/address`}
+                to={`${match.path}/address`}
                 className="user-link"
                 activeClassName="active"
               >
@@ -117,13 +117,13 @@ class UserCenter extends Component {
               </NavLink>
             </div>
           </div>
-          <Route exact path={`${match.url}/`} component={Property} />
-          <Route path={`${match.url}/verified`} component={Verified} />
-          <Route path={`${match.url}/payment`} component={Payment} />
-          <Route path={`${match.url}/transaction`} component={Transaction} />
-          <Route path={`${match.url}/finance`} component={Finance} />
-          <Route path={`${match.url}/address`} component={Address} />
-          <Route path={`${match.url}/status`} component={Status} />
+          <Route exact path={`${match.path}/`} component={Property} />
+          <Route path={`${match.path}/verified`} component={Verified} />
+          <Route path={`${match.path}/payment`} component={Payment} />
+          <Route path={`${match.path}/transaction`} component={Transaction} />
+          <Route path={`${match.path}/finance`} component={Finance} />
+          <Route path={`${match.path}/address`} component={Address} />
+          <Route path={`${match.path}/status`} component={Status} />
         </div>
         {popup}
       </div>

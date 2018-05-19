@@ -1,17 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Tabs,
-  Input,
-  Table,
-  Menu,
-  Dropdown,
-  Icon,
-  Tooltip,
-  Button,
-  Select,
-  message
-} from 'antd';
+import { Tabs, Input, Table, Menu, Dropdown, Icon, Tooltip, Button, Select, message } from 'antd';
 import NoticeBar from '../../components/noticeBar';
 import classnames from 'classnames';
 import Scrollbars from 'react-custom-scrollbars';
@@ -61,7 +50,6 @@ class Trade extends Component {
       this.state.coinName !== nextState.coinName
     ) {
       const { marketName, coinName } = nextState;
-      this.getCoinList();
       this.getStream({
         coinMain: marketName,
         coinOther: coinName
@@ -79,10 +67,7 @@ class Trade extends Component {
       const favoriteCoins = [];
       Object.keys(coinList).forEach(key => {
         coinList[key].forEach(coin => {
-          if (
-            coin.favorite &&
-            !favoriteCoins.includes(`${coin.coinMain}.${coin.coinOther}`)
-          ) {
+          if (coin.favorite && !favoriteCoins.includes(`${coin.coinMain}.${coin.coinOther}`)) {
             favoriteCoins.push(`${coin.coinMain}.${coin.coinOther}`);
           }
         });
@@ -93,7 +78,6 @@ class Trade extends Component {
 
   // 获取币种列表
   getCoinList = () => {
-    const { market } = this.state;
     request('/index/allTradeExpair', {
       method: 'GET'
     }).then(json => {
@@ -101,9 +85,7 @@ class Trade extends Component {
         let coinList = {};
         Object.keys(json.data).forEach(key => {
           const coins = json.data[key].map(coin => {
-            if (
-              this.favoriteCoins.includes(`${coin.coinMain}.${coin.coinOther}`)
-            ) {
+            if (this.favoriteCoins.includes(`${coin.coinMain}.${coin.coinOther}`)) {
               coin.favorite = true;
             }
             return coin;
@@ -157,10 +139,7 @@ class Trade extends Component {
     const { coinList } = this.state;
     Object.keys(coinList).forEach(key => {
       const coins = coinList[key].map(coin => {
-        if (
-          selectedCoin.coinMain === coin.coinMain &&
-          selectedCoin.coinOther === coin.coinOther
-        ) {
+        if (selectedCoin.coinMain === coin.coinMain && selectedCoin.coinOther === coin.coinOther) {
           if (coin.favorite) {
             delete coin.favorite;
           } else {
@@ -177,6 +156,7 @@ class Trade extends Component {
 
   // 根据币种跳转市场
   jumpMarket = obj => {
+    this.props.history.push(`/trade?market=${obj.key}&coin=${this.state.coinName}`);
     this.setState({
       market: obj.key,
       marketName: obj.key,
@@ -270,99 +250,6 @@ class Trade extends Component {
       }
     }
 
-    const latestData = [
-      {
-        key: 1,
-        time: '21:54:25',
-        price: '0.00011478',
-        volume: '19.52'
-      },
-      {
-        key: 2,
-        time: '21:54:25',
-        price: '0.00011478',
-        volume: '19.52'
-      },
-      {
-        key: 3,
-        time: '21:54:25',
-        price: '0.00011478',
-        volume: '19.52'
-      },
-      {
-        key: 4,
-        time: '21:54:25',
-        price: '0.00011478',
-        volume: '19.52'
-      },
-      {
-        key: 5,
-        time: '21:54:25',
-        price: '0.00011478',
-        volume: '19.52'
-      },
-      {
-        key: 6,
-        time: '21:54:25',
-        price: '0.00011478',
-        volume: '19.52'
-      },
-      {
-        key: 7,
-        time: '21:54:25',
-        price: '0.00011478',
-        volume: '19.52'
-      },
-      {
-        key: 8,
-        time: '21:54:25',
-        price: '0.00011478',
-        volume: '19.52'
-      },
-      {
-        key: 9,
-        time: '21:54:25',
-        price: '0.00011478',
-        volume: '19.52'
-      },
-      {
-        key: 10,
-        time: '21:54:25',
-        price: '0.00011478',
-        volume: '19.52'
-      },
-      {
-        key: 11,
-        time: '21:54:25',
-        price: '0.00011478',
-        volume: '19.52'
-      },
-      {
-        key: 12,
-        time: '21:54:25',
-        price: '0.00011478',
-        volume: '19.52'
-      },
-      {
-        key: 13,
-        time: '21:54:25',
-        price: '0.00011478',
-        volume: '19.52'
-      },
-      {
-        key: 14,
-        time: '21:54:25',
-        price: '0.00011478',
-        volume: '19.52'
-      },
-      {
-        key: 15,
-        time: '21:54:25',
-        price: '0.00011478',
-        volume: '19.52'
-      }
-    ];
-
     const pendingOrderColumns = [
       {
         title: '委托时间',
@@ -422,19 +309,14 @@ class Trade extends Component {
                       })}
                     </Menu>
                   }
-                  getPopupContainer={() =>
-                    document.querySelector('.content.trade')
-                  }
+                  getPopupContainer={() => document.querySelector('.content.trade')}
                 >
                   <a className="ant-dropdown-link" href="javascript:;">
                     {market === 'optional' ? '自选' : `${market}市场`}&nbsp;&nbsp;<Icon type="down" />
                   </a>
                 </Dropdown>
                 <div className="trade-plate-header-right">
-                  <Search
-                    onSearch={value => console.log(value)}
-                    style={{ width: 80 }}
-                  />
+                  <Search onSearch={value => console.log(value)} style={{ width: 80 }} />
                 </div>
               </header>
               <div className="trade-plate-tit cell-3">
@@ -445,10 +327,7 @@ class Trade extends Component {
                     <span className="ant-table-column-sorter-up off" title="↑">
                       <i className="anticon anticon-caret-up" />
                     </span>
-                    <span
-                      className="ant-table-column-sorter-down off"
-                      title="↓"
-                    >
+                    <span className="ant-table-column-sorter-down off" title="↓">
                       <i className="anticon anticon-caret-down" />
                     </span>
                   </div>
@@ -459,28 +338,26 @@ class Trade extends Component {
                     <span className="ant-table-column-sorter-up off" title="↑">
                       <i className="anticon anticon-caret-up" />
                     </span>
-                    <span
-                      className="ant-table-column-sorter-down off"
-                      title="↓"
-                    >
+                    <span className="ant-table-column-sorter-down off" title="↓">
                       <i className="anticon anticon-caret-down" />
                     </span>
                   </div>
                 </div>
               </div>
-              <div className="trade-plate-container">
+              <div className="trade-plate-container market">
                 <Scrollbars>
                   <table>
                     <tbody>
                       {pairList.map(coin => {
-                        const change =
-                          (coin.latestPrice - coin.firstPrice) /
-                          coin.firstPrice;
+                        const change = (coin.latestPrice - coin.firstPrice) / coin.firstPrice;
                         const trend = change > 0 ? 'green' : 'red';
                         return (
                           <tr
                             key={coin.coinOther}
                             onClick={this.selectCoin.bind(this, coin)}
+                            className={classnames({
+                              selected: coin.coinMain === marketName && coin.coinOther === coinName
+                            })}
                           >
                             <td>
                               <i
@@ -496,9 +373,7 @@ class Trade extends Component {
                               {coin.coinOther}
                             </td>
                             <td>{coin.latestPrice}</td>
-                            <td className={`font-color-${trend}`}>
-                              {change.toFixed(2)}%
-                            </td>
+                            <td className={`font-color-${trend}`}>{change.toFixed(2)}%</td>
                           </tr>
                         );
                       })}
@@ -524,13 +399,8 @@ class Trade extends Component {
                         streamList.map(stream => {
                           const trend = stream.type === 0 ? 'green' : 'red';
                           return (
-                            <tr
-                              key={stream.date}
-                              className={`font-color-${trend}`}
-                            >
-                              <td>
-                                {stampToDate(Number(stream.date), 'hh:mm:ss')}
-                              </td>
+                            <tr key={stream.date} className={`font-color-${trend}`}>
+                              <td>{stampToDate(Number(stream.date), 'hh:mm:ss')}</td>
                               <td>{stream.price}</td>
                               <td>{stream.volume}</td>
                             </tr>
@@ -567,17 +437,13 @@ class Trade extends Component {
                       ].map(market => {
                         return (
                           <Menu.Item key={market.marketName}>
-                            {coinName}/{market.marketName} {market.pairPrice}/{
-                              market.pairCNY
-                            }
+                            {coinName}/{market.marketName} {market.pairPrice}/{market.pairCNY}
                           </Menu.Item>
                         );
                       })}
                     </Menu>
                   }
-                  getPopupContainer={() =>
-                    document.querySelector('.content.trade')
-                  }
+                  getPopupContainer={() => document.querySelector('.content.trade')}
                 >
                   <a className="ant-dropdown-link" href="javascript:;">
                     {coinName}/{marketName}&nbsp;&nbsp;<Icon type="down" />
@@ -623,18 +489,10 @@ class Trade extends Component {
             <div className="trade-plate">
               <Tabs defaultActiveKey="1">
                 <TabPane tab="限价交易" key="1">
-                  <TradeBox
-                    marketName={marketName}
-                    coinName={coinName}
-                    tradeType="limit"
-                  />
+                  <TradeBox marketName={marketName} coinName={coinName} tradeType="limit" />
                 </TabPane>
                 <TabPane tab="市价交易" key="2">
-                  <TradeBox
-                    marketName={marketName}
-                    coinName={coinName}
-                    tradeType="market"
-                  />
+                  <TradeBox marketName={marketName} coinName={coinName} tradeType="market" />
                 </TabPane>
                 {false && (
                   <TabPane
@@ -651,11 +509,7 @@ class Trade extends Component {
                     }
                     key="3"
                   >
-                    <TradeBox
-                      marketName={marketName}
-                      coinName={coinName}
-                      tradeType="stop"
-                    />
+                    <TradeBox marketName={marketName} coinName={coinName} tradeType="stop" />
                   </TabPane>
                 )}
               </Tabs>
@@ -665,27 +519,25 @@ class Trade extends Component {
             <div className="trade-plate">
               <header className="trade-plate-header">
                 <div className="trade-plate-tab">
-                  {['icon-maimaipan', 'icon-maipan1', 'icon-maipan'].map(
-                    (iconName, index) => {
-                      const mapToTitle = {
-                        'icon-maimaipan': 'buy and sell',
-                        'icon-maipan1': 'buy',
-                        'icon-maipan': 'sell'
-                      };
-                      return (
-                        <i
-                          key={iconName}
-                          className={classnames({
-                            iconfont: true,
-                            [iconName]: true,
-                            active: listType === index - 1
-                          })}
-                          title={mapToTitle[iconName]}
-                          onClick={this.switchList.bind(this, index)}
-                        />
-                      );
-                    }
-                  )}
+                  {['icon-maimaipan', 'icon-maipan1', 'icon-maipan'].map((iconName, index) => {
+                    const mapToTitle = {
+                      'icon-maimaipan': 'buy and sell',
+                      'icon-maipan1': 'buy',
+                      'icon-maipan': 'sell'
+                    };
+                    return (
+                      <i
+                        key={iconName}
+                        className={classnames({
+                          iconfont: true,
+                          [iconName]: true,
+                          active: listType === index - 1
+                        })}
+                        title={mapToTitle[iconName]}
+                        onClick={this.switchList.bind(this, index)}
+                      />
+                    );
+                  })}
                 </div>
                 <div className="trade-plate-header-right">
                   合并
@@ -706,22 +558,14 @@ class Trade extends Component {
                   <div className="trade-plate-tit-cell">类型</div>
                   <div className="trade-plate-tit-cell">价格({marketName})</div>
                   <div className="trade-plate-tit-cell">数量({coinName})</div>
-                  <div className="trade-plate-tit-cell">
-                    交易额({marketName})
-                  </div>
+                  <div className="trade-plate-tit-cell">交易额({marketName})</div>
                 </div>
               ) : (
                 <div className="trade-plate-tit list">
-                  <div className="trade-plate-tit-cell">
-                    {listType === 0 ? '买入' : '卖出'}
-                  </div>
-                  <div className="trade-plate-tit-cell">
-                    {listType === 0 ? '买入' : '卖出'}价
-                  </div>
+                  <div className="trade-plate-tit-cell">{listType === 0 ? '买入' : '卖出'}</div>
+                  <div className="trade-plate-tit-cell">{listType === 0 ? '买入' : '卖出'}价</div>
                   <div className="trade-plate-tit-cell">委单量</div>
-                  <div className="trade-plate-tit-cell">
-                    交易额({marketName})
-                  </div>
+                  <div className="trade-plate-tit-cell">交易额({marketName})</div>
                 </div>
               )}
               {listType === -1 ? (
@@ -733,14 +577,10 @@ class Trade extends Component {
                           return (
                             index < 15 && (
                               <tr key={index}>
-                                <td className="font-color-red">
-                                  卖出{15 - index}
-                                </td>
+                                <td className="font-color-red">卖出{15 - index}</td>
                                 <td>{record.price}</td>
                                 <td>{record.volume}</td>
-                                <td className="font-color-red">
-                                  {record.sumTotal}
-                                </td>
+                                <td className="font-color-red">{record.sumTotal}</td>
                               </tr>
                             )
                           );
@@ -762,14 +602,10 @@ class Trade extends Component {
                           return (
                             index < 15 && (
                               <tr key={index}>
-                                <td className="font-color-green">
-                                  买入{index + 1}
-                                </td>
+                                <td className="font-color-green">买入{index + 1}</td>
                                 <td>{record.price}</td>
                                 <td>{record.volume}</td>
-                                <td className="font-color-green">
-                                  {record.sumTotal}
-                                </td>
+                                <td className="font-color-green">{record.sumTotal}</td>
                               </tr>
                             )
                           );
@@ -797,9 +633,7 @@ class Trade extends Component {
                                 </td>
                                 <td>{record.price}</td>
                                 <td>{record.volume}</td>
-                                <td className={`font-color-${colorName}`}>
-                                  {record.sumTotal}
-                                </td>
+                                <td className={`font-color-${colorName}`}>{record.sumTotal}</td>
                               </tr>
                             );
                           })}
@@ -815,25 +649,13 @@ class Trade extends Component {
           <div className="trade-plate">
             <Tabs defaultActiveKey="1">
               <TabPane tab="我的挂单" key="1">
-                <Table
-                  columns={pendingOrderColumns}
-                  dataSource={null}
-                  pagination={false}
-                />
+                <Table columns={pendingOrderColumns} dataSource={null} pagination={false} />
               </TabPane>
               <TabPane tab="全部委托" key="2">
-                <Table
-                  columns={pendingOrderColumns}
-                  dataSource={null}
-                  pagination={false}
-                />
+                <Table columns={pendingOrderColumns} dataSource={null} pagination={false} />
               </TabPane>
               <TabPane tab="成交历史" key="3">
-                <Table
-                  columns={pendingOrderColumns}
-                  dataSource={null}
-                  pagination={false}
-                />
+                <Table columns={pendingOrderColumns} dataSource={null} pagination={false} />
               </TabPane>
             </Tabs>
           </div>

@@ -150,7 +150,8 @@
     flex: 1 0 90px;
 }
 
-.trade-plate-container tr:hover{
+.trade-plate-container.market tr:hover,
+.trade-plate-container.market tr.selected{
     background-color: #3f4657;
 }
 .trade-plate-container td:first-child {
