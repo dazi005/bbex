@@ -477,10 +477,13 @@ a:hover {
     padding: 8px 15px!important;
 }
 
-
 .withdraw_content .ant-list-sm .ant-list-item{
     padding: 2px 0;
 }
 .bbex_notice .ant-list-header{
     border-bottom: 0 !important;
+}
+
+.change_pwd_modal .ant-form-item{
+    margin-bottom: 16px;
 }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button } from 'antd';
+import Password from './Password';
 import './security.css'
 
 class Security extends Component {
@@ -7,9 +8,11 @@ class Security extends Component {
     super(props);
     this.state = {
       dialog: '',
-
     }
-    console.log(sessionStorage.getItem('account'))
+  }
+
+  showDialog = () =>{
+    this.setState({dialog: <Password />})
   }
 
   render(){
@@ -21,8 +24,9 @@ class Security extends Component {
       </div>
       <div className="line">
         <span className="title">密码</span>
-        <Button type="primary" style={{borderRadius: 4}}>修改密码</Button>
+        <Button onClick={this.showDialog} type="primary" style={{borderRadius: 4}}>修改密码</Button>
       </div>
+      {this.state.dialog}
     </div>
   }
 }
