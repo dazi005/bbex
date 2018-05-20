@@ -24,7 +24,7 @@ class Address extends Component {
   }
 
   getAddress = () => {
-    request('/coin/withdraw/address/list', {
+    request('/withdraw/address/list', {
         method: 'GET'
     }).then(json => {
         if (json.code === 10000000) {
@@ -67,7 +67,7 @@ class Address extends Component {
     this.setState({remark: e.target.value});
   }
   add = (coinId, symbol, address, tag) => {
-    request('/coin/withdraw/address/add', {
+    request('/withdraw/address/add', {
         body: {
           coinId,
           symbol,
@@ -97,6 +97,7 @@ class Address extends Component {
             message.error(json.msg);
         }
     })
+
   }
   addClick = () =>{
     let {currencys, address, symbol, remark} = this.state;

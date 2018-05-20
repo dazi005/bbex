@@ -1,5 +1,7 @@
 .transation_content{
+  box-sizing: border-box;
   position: relative;
+  min-width: 500px;
 }
 
 .transation_content .search{

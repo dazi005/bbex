@@ -7,6 +7,7 @@ import Transaction from './transaction';
 import Finance from './finance';
 import Address from './address';
 import Status from './status';
+import Security from './security';
 import Popup from '../../components/popup';
 
 import './user.css';
@@ -123,6 +124,7 @@ class UserCenter extends Component {
           <Route path={`${match.path}/transaction`} component={Transaction} />
           <Route path={`${match.path}/finance`} component={Finance} />
           <Route path={`${match.path}/address`} component={Address} />
+          <Route path={`${match.path}/security`} component={Security} />
           <Route path={`${match.path}/status`} component={Status} />
         </div>
         {popup}
