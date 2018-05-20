@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Tabs, Carousel as Notice, Input, Table, message } from 'antd';
+import { Tabs, Input, Table, message } from 'antd';
 import { Carousel } from 'react-responsive-carousel';
 import classnames from 'classnames';
 import NoticeBar from '../../components/noticeBar';
@@ -87,10 +88,15 @@ class Home extends Component {
     });
   };
 
+  jumpToTrade = record => {
+    this.props.history.push(`/trade?market=${record.coinMain}&coin=${record.coinOther}`);
+  };
+
   render() {
     let { banners, coinType, sortedInfo, tradeExpair } = this.state;
     coinType = coinType === 'my' ? '' : coinType;
     sortedInfo = sortedInfo || {};
+
     const columns = [
       {
         title: '币种',
@@ -122,7 +128,12 @@ class Home extends Component {
         dataIndex: 'change',
         key: 'change',
         sorter: (a, b) => a.change - b.change,
-        sortOrder: sortedInfo.columnKey === 'change' && sortedInfo.order
+        sortOrder: sortedInfo.columnKey === 'change' && sortedInfo.order,
+        render: (text, record) => {
+          const { latestPrice, firstPrice } = record;
+          const change = (latestPrice - firstPrice) / firstPrice || 0;
+          return `${change.toFixed(2)}%`;
+        }
       },
       {
         title: '最高价',
@@ -164,46 +175,29 @@ class Home extends Component {
         <div className="content-inner">
           <div className="coins-market">
             <Tabs tabBarExtraContent={searchBar} onChange={this.handleSwitchTabs}>
-              <TabPane
-                tab={
-                  <span>
-                    <i className="iconfont icon-shoucang-active" />
-                    自选市场
-                  </span>
-                }
-                key="my"
-              >
-                <Table
-                  columns={columns}
-                  dataSource={tradeExpair && tradeExpair['BTC']}
-                  onChange={this.handleChange}
-                  pagination={false}
-                />
-              </TabPane>
-              <TabPane tab="BTC 市场" key="BTC">
-                <Table
-                  columns={columns}
-                  dataSource={tradeExpair && tradeExpair['BTC']}
-                  onChange={this.handleChange}
-                  pagination={false}
-                />
-              </TabPane>
-              <TabPane tab="ETH 市场" key="ETH">
-                <Table
-                  columns={columns}
-                  dataSource={tradeExpair && tradeExpair['ETH']}
-                  onChange={this.handleChange}
-                  pagination={false}
-                />
-              </TabPane>
-              <TabPane tab="USDT 市场" key="USDT">
-                <Table
-                  columns={columns}
-                  dataSource={tradeExpair && tradeExpair['USDT']}
-                  onChange={this.handleChange}
-                  pagination={false}
-                />
-              </TabPane>
+              {['optional', 'USDT', 'ETH', 'BTC'].map(market => (
+                <TabPane
+                  tab={market === 'optional' ? (
+                    <span>
+                      <i className="iconfont icon-shoucang-active" />
+                      自选市场
+                    </span>
+                  ) : (
+                    `${market} 市场`
+                  )}
+                  key={market}
+                >
+                  <Table
+                    columns={columns}
+                    dataSource={tradeExpair && tradeExpair[market]}
+                    onChange={this.handleChange}
+                    onRow={record => ({
+                      onClick: this.jumpToTrade.bind(this, record)
+                    })}
+                    pagination={false}
+                  />
+                </TabPane>
+              ))}
             </Tabs>
           </div>
         </div>
@@ -250,5 +244,9 @@ class Home extends Component {
     );
   }
 }
+
+Home.contextTypes = {
+  request: PropTypes.func.isRequired
+};
 
 export default Home;

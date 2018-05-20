@@ -4,7 +4,6 @@ import tradeviewPageUtil from './TradeviewPageUtil';
 import { WS_ADDRESS } from '../utils/constants';
 
 class TradeviewPage extends Component {
-
   websocketUrl = `${WS_ADDRESS}/bbex/websocket?${this.props.coin}_${this.props.market}_kline`;
 
   componentDidMount() {
@@ -61,6 +60,12 @@ class TradeviewPage extends Component {
         });
       })()
     );
+  }
+
+  componentWillMount() {
+    if (window.ws) {
+      window.ws.close();
+    }
   }
 
   render() {

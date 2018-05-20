@@ -82,6 +82,12 @@
   color: #d4a668;
 }
 
+.coins-market .ant-table-placeholder {
+  color: #fff;
+  border-bottom-color: #5a5959;
+  background-color: rgb(51, 60, 75);
+}
+
 .partner {
   margin-top: 70px;
   padding: 80px 0 50px;

@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import Loadable from 'react-loadable';
 import Container from './views/Container';
+import request from './utils/request';
 import Home from './views/home';
 
 import './App.css';
@@ -80,32 +81,28 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
-      sessionStorage.getItem('account') ? (
-        <Component {...props} />
-      ) : (
-        <Redirect to="/signin" />
-      )
+      sessionStorage.getItem('account') ? <Component {...props} /> : <Redirect to="/signin" />
     }
   />
 );
 
 const App = () => (
   <Router>
-    <Container>
-      <Switch>
-        <Route exact path="/" component={Home} />
-        <Route path="/trade" component={Trade} />
-        <Route path="/signin" component={Signin} />
-        <Route path="/register" component={Register} />
-        <Route path="/reset" component={Reset} />
-        <Route path="/resetPassword" component={ResetPassword} />
-        <PrivateRoute path="/user" component={User} />
-        <PrivateRoute path="/authentication" component={Authentication} />
-        <Route path="/c2c" component={C2c} />
-        <Route exact path="/notice" component={Notice} />
-        <Route path="/notice/:id" component={Detail} />
-        <Route path="*" component={NotFound} />
-      </Switch>
+    <Container request={request}>
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route path="/trade" component={Trade} />
+          <Route path="/signin" component={Signin} />
+          <Route path="/register" component={Register} />
+          <Route path="/reset" component={Reset} />
+          <Route path="/resetPassword" component={ResetPassword} />
+          <PrivateRoute path="/user" component={User} />
+          <PrivateRoute path="/authentication" component={Authentication} />
+          <Route path="/c2c" component={C2c} />
+          <Route exact path="/notice" component={Notice} />
+          <Route path="/notice/:id" component={Detail} />
+          <Route path="*" component={NotFound} />
+        </Switch>
     </Container>
   </Router>
 );

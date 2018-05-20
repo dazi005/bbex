@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
 import { message } from 'antd';
 import request from '../utils/request';
@@ -6,6 +7,15 @@ import request from '../utils/request';
 import logo from '../logo.svg';
 
 class Container extends Component {
+  getChildContext() {
+    return { request: this.request };
+  }
+
+  constructor(props, context) {
+    super(props, context);
+    this.request = props.request;
+  }
+
   state = {
     login: false
   };
@@ -118,96 +128,61 @@ class Container extends Component {
                 <ul className="footer-contact">
                   <li>联系我们</li>
                   <li>
-                    <Link
-                      to="javascript:void(0)"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <Link to="javascript:void(0)" target="_blank" rel="noopener noreferrer">
                       <i className="iconfont icon-weixin" />
                     </Link>
-                    <Link
-                      to="javascript:void(0)"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <Link to="javascript:void(0)" target="_blank" rel="noopener noreferrer">
                       <i className="iconfont icon-weibo" />
                     </Link>
-                    <Link
-                      to="javascript:void(0)"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <Link to="javascript:void(0)" target="_blank" rel="noopener noreferrer">
                       <i className="iconfont icon-qq" />
                     </Link>
                   </li>
                   <li>
-                    联系邮箱：<Link to="mailto: support@bbex.com">
-                      support@bbex.com
-                    </Link>
+                    联系邮箱：<Link to="mailto: support@bbex.com">support@bbex.com</Link>
                   </li>
                 </ul>
               </div>
             </div>
             <div className="footer-link">
               友情链接：
-              <Link
-                to="https://www.coinmarketcap.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link to="https://www.coinmarketcap.com" target="_blank" rel="noopener noreferrer">
                 coinmarketcap
               </Link>
-              <Link
-                to="https://www.bitcointalk.org"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link to="https://www.bitcointalk.org" target="_blank" rel="noopener noreferrer">
                 BitcoinTalk
               </Link>
-              <Link
-                to="https://www.coindesk.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link to="https://www.coindesk.com" target="_blank" rel="noopener noreferrer">
                 coindesk
               </Link>
-              <Link
-                to="https://www.btc123.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link to="https://www.btc123.com" target="_blank" rel="noopener noreferrer">
                 btc123
               </Link>
-              <Link
-                to="https://tradeblock.com/ethereum"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link to="https://tradeblock.com/ethereum" target="_blank" rel="noopener noreferrer">
                 tradeblock
               </Link>
-              <Link
-                to="https://www.bitcoin.org"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link to="https://www.bitcoin.org" target="_blank" rel="noopener noreferrer">
                 bitcoin.org
               </Link>
-              <Link
-                to="https://pool.btc.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link to="https://pool.btc.com" target="_blank" rel="noopener noreferrer">
                 BTC.com矿池
               </Link>
             </div>
-            <div className="footer-copyright">
-              Copyright 2018 All Rights Reserved.
-            </div>
+            <div className="footer-copyright">Copyright 2018 All Rights Reserved.</div>
           </div>
         </footer>
       </div>
     );
   }
 }
+
+Container.propTypes = {
+  request: PropTypes.func.isRequired,
+  children: PropTypes.element.isRequired
+};
+
+Container.childContextTypes = {
+  request: PropTypes.func.isRequired
+};
 
 export default withRouter(Container);

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { message } from 'antd';
+import { IMAGES_ADDRESS } from '../../utils/constants';
 import request from '../../utils/request';
 import classnames from 'classnames';
 
@@ -100,7 +101,7 @@ class Signin extends Component {
                                     placeholder="验证码"
                                 />
                                 <img
-                                    src={`http://images.bbex.one/image/view/${imgName}`}
+                                    src={`${IMAGES_ADDRESS}/image/view/${imgName}`}
                                     className="inner-graphic"
                                     alt="图形验证码"
                                     onClick={this.getValidImg}

@@ -366,11 +366,11 @@
 
 
 .trade-form .trade-form-total {
-    width: 220px;
+    width: 100%;
     text-align: center;
 }
 .trade-form .ant-btn {
-    width: 220px;
+    width: 100%;
     margin-top: 10px;
 }
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import GraphicPopup from '../../components/graphic-popup';
 import request from '../../utils/request';
 
@@ -75,7 +75,7 @@ class Register extends Component {
             if (json.code === 10000000) {
                 this.props.history.push('/signin');
             }else {
-                
+                message.error(json.msg);
             }
         })
     }

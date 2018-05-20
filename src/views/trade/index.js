@@ -17,17 +17,18 @@ const Option = Select.Option;
 
 class Trade extends Component {
   state = {
-    market: getQueryString('market') || 'BTC',
+    market: getQueryString('market') || 'USDT',
     coinList: null,
-    marketName: getQueryString('market') || 'BTC',
-    coinName: getQueryString('coin') || 'ETH',
+    marketName: getQueryString('market') || 'USDT',
+    coinName: getQueryString('coin') || 'LOOM',
     tradeList: null,
     streamList: null,
     pendingOrderList: [],
     completedOrderList: [],
     coinPrice: '0.00000878 &asymp;￥0.54',
     listType: -1,
-    mergeNumber: 8
+    mergeNumber: 8,
+    orderStatus: 0
   };
 
   favoriteCoins = localStorage.getItem('favoriteCoins')
@@ -35,11 +36,26 @@ class Trade extends Component {
     : [];
 
   componentWillMount() {
+    this.getRate();
     if (sessionStorage.getItem('account')) {
       const { marketName, coinName } = this.state;
       this.findOrderList({ marketName, coinName, status: 0 });
     }
   }
+
+  // 获取USDT汇率
+  getRate = () => {
+    request('/index/lastPrice', {
+      method: 'GET'
+    }).then(json => {
+      if (json.code === 10000000) {
+        const { btcLastPrice, ethLastPrice } = json.data;
+        this.setState({ btcLastPrice, ethLastPrice });
+      } else {
+        message.error(json.msg);
+      }
+    });
+  };
 
   // 未完成订单
   findOrderList = ({ marketName, coinName, status }) => {
@@ -53,14 +69,13 @@ class Trade extends Component {
       }
     }).then(json => {
       if (json.code === 10000000) {
-        console.log(json.data);
         if (status === 0) {
           this.setState({ pendingOrderList: json.data });
         } else {
           this.setState({ completedOrderList: json.data });
         }
       } else {
-        message.error(json.message);
+        message.error(json.msg);
       }
     });
   };
@@ -73,23 +88,23 @@ class Trade extends Component {
       if (json.code === 10000000) {
         message.success('撤单成功！');
       } else {
-        message.error(json.message);
+        message.error(json.msg);
       }
     });
   };
 
   // 订单详情
-  getOrderDetail = (orderNo) => {
+  getOrderDetail = orderNo => {
     request(`/coin/tradeOrderDetail/${orderNo}`, {
       method: 'GET'
     }).then(json => {
       if (json.code === 10000000) {
         console.log(json.data);
       } else {
-        message.error(json.message);
+        message.error(json.msg);
       }
     });
-  }
+  };
 
   componentDidMount() {
     const { marketName, coinName } = this.state;
@@ -103,49 +118,142 @@ class Trade extends Component {
       coinOther: coinName
     });
 
+    //websocket 链接
+    this.openTradeWebsocket();
+    if (sessionStorage.getItem('account')) {
+      this.openOrderWebsocket();
+    }
+  }
+
+  openTradeWebsocket = () => {
     //打开websockets
-    var ws = new window.ReconnectingWebSocket(
+    const { marketName, coinName } = this.state;
+    const ws = new window.ReconnectingWebSocket(
       `${WS_ADDRESS}/bbex/websocket?${coinName}_${marketName}`
     );
     ws.onopen = evt => {
-      console.log('Connection open ...');
-      ws.send('Hello bbex!');
+      console.log('trade Websocket Connection open ...');
     };
 
     ws.onmessage = evt => {
       const record = JSON.parse(evt.data);
-      console.log('======record: ', record);
+      console.log('======trade record: ', record);
 
-      const { tradeList, streamList } = this.state;
+      const { coinList, tradeList, streamList } = this.state;
+
+      let isnNewRecord = true;
+
       if (record.buyOrderVO) {
-        tradeList.buyOrderVOList.push(record.buyOrderVO);
-        tradeList.buyOrderVOList = tradeList.buyOrderVOList.sort((x, y) => y.price - x.price);
+        tradeList.buyOrderVOList = tradeList.buyOrderVOList.map(item => {
+          if (item.price === record.buyOrderVO.price) {
+            item.volume += record.buyOrderVO.volume;
+            isnNewRecord = false;
+          }
+          return item;
+        });
+        if (isnNewRecord) {
+          tradeList.buyOrderVOList.push(record.buyOrderVO);
+          tradeList.buyOrderVOList = tradeList.buyOrderVOList.sort((x, y) => y.price - x.price);
+        }
       }
+
       if (record.sellOrderVO) {
-        tradeList.sellOrderVOList.push(record.sellOrderVO);
-        tradeList.sellOrderVOList = tradeList.sellOrderVOList.sort((x, y) => y.price - x.price);
+        tradeList.sellOrderVOList = tradeList.sellOrderVOList.map(item => {
+          if (item.price === record.sellOrderVO.price) {
+            item.volume += record.sellOrderVO.volume;
+            isnNewRecord = false;
+          }
+          return item;
+        });
+        if (isnNewRecord) {
+          tradeList.sellOrderVOList.push(record.sellOrderVO);
+          tradeList.sellOrderVOList = tradeList.sellOrderVOList.sort((x, y) => y.price - x.price);
+        }
       }
+
       if (record.matchStreamVO) {
+        const matchVo = record.matchStreamVO;
+        coinList[marketName] = coinList[marketName].map(item => {
+          if(matchVo.coinOther === item.coinOther) {
+            item.latestPrice = matchVo.price;
+          }
+          return item;
+        });
+
+        tradeList.buyOrderVOList = tradeList.buyOrderVOList.filter(item => {
+          if (
+            item.coinMain === matchVo.coinMain &&
+            item.coinOther === matchVo.coinOther &&
+            item.price === matchVo.price
+          ) {
+            item.volume -= matchVo.volume;
+          }
+          return item.volume > 0;
+        });
+        tradeList.sellOrderVOList = tradeList.sellOrderVOList.filter(item => {
+          if (
+            item.coinMain === matchVo.coinMain &&
+            item.coinOther === matchVo.coinOther &&
+            item.price === matchVo.price
+          ) {
+            item.volume -= matchVo.volume;
+          }
+          return item.volume > 0;
+        });
         streamList.unshift(record.matchStreamVO);
       }
-
-      this.setState({ tradeList, streamList });
+      
+      this.setState({ coinList, tradeList, streamList });
     };
 
     ws.onclose = evt => {
-      console.log('Connection closed.');
+      console.log('trade Websocket Connection closed.');
     };
 
     ws.onerror = evt => {
       console.log(evt);
     };
 
-    this.setState({ ws });
-  }
+    this.setState({ tradeWS: ws });
+  };
+
+  openOrderWebsocket = () => {
+    //打开websockets
+    const { marketName, coinName } = this.state;
+    const { id } = JSON.parse(sessionStorage.getItem('account'));
+    const ws = new window.ReconnectingWebSocket(
+      `${WS_ADDRESS}/bbex/websocket?${coinName}_${marketName}_${id}`
+    );
+    ws.onopen = evt => {
+      console.log('order Websocket Connection open ...');
+    };
+
+    ws.onmessage = evt => {
+      const record = JSON.parse(evt.data);
+      console.log('======order record: ', record);
+
+      const { pendingOrderList } = this.state;
+
+      pendingOrderList.unshift(record);
+
+      this.setState({ pendingOrderList });
+    };
+
+    ws.onclose = evt => {
+      console.log('order Websocket Connection closed.');
+    };
+
+    ws.onerror = evt => {
+      console.log(evt);
+    };
+
+    this.setState({ orderWS: ws });
+  };
 
   componentWillUnmount() {
     if (JSON.parse(sessionStorage.getItem('account'))) {
-      this.state.ws.close();
+      this.state.tradeWS.close();
+      this.state.orderWs.close();
     }
   }
 
@@ -189,6 +297,9 @@ class Trade extends Component {
       if (json.code === 10000000) {
         let coinList = {};
         Object.keys(json.data).forEach(key => {
+          if (key === this.state.market && !getQueryString('coin')) {
+            this.setState({ coinName: json.data[key][0].coinOther });
+          }
           const coins = json.data[key].map(coin => {
             if (this.favoriteCoins.includes(`${coin.coinMain}.${coin.coinOther}`)) {
               coin.favorite = true;
@@ -199,7 +310,7 @@ class Trade extends Component {
           this.setState({ coinList });
         });
       } else {
-        message.error(json.message);
+        message.error(json.msg);
       }
     });
   };
@@ -213,7 +324,7 @@ class Trade extends Component {
       if (json.code === 10000000) {
         this.setState({ tradeList: json.data });
       } else {
-        message.error(json.message);
+        message.error(json.msg);
       }
     });
   };
@@ -227,7 +338,7 @@ class Trade extends Component {
       if (json.code === 10000000) {
         this.setState({ streamList: json.data });
       } else {
-        message.error(json.message);
+        message.error(json.msg);
       }
     });
   };
@@ -261,7 +372,6 @@ class Trade extends Component {
 
   // 根据币种跳转市场
   jumpMarket = obj => {
-    // window.location.assign(`/trade?market=${obj.key}&coin=${this.state.coinName}`);
     this.props.history.push(`/trade?market=${obj.key}&coin=${this.state.coinName}`);
     this.setState({
       market: obj.key,
@@ -275,8 +385,7 @@ class Trade extends Component {
 
   // 选择币种
   selectCoin = coin => {
-    const { market } = this.state;
-    // window.location.assign(`/trade?market=${market}&coin=${coin.coinOther}`);
+    const { market, orderStatus } = this.state;
     this.props.history.push(`/trade?market=${market}&coin=${coin.coinOther}`);
     this.setState({
       marketName: market,
@@ -285,6 +394,7 @@ class Trade extends Component {
 
     if (sessionStorage.getItem('account')) {
       this.findOrderList({
+        status: orderStatus,
         marketName: market,
         coinName: coin.coinOther
       });
@@ -318,7 +428,7 @@ class Trade extends Component {
         if (json.data.sellOrderVOList) tradeList.sellOrderVOList = json.data.sellOrderVOList;
         this.setState({ tradeList });
       } else {
-        message.error(json.message);
+        message.error(json.msg);
       }
     });
   };
@@ -370,7 +480,7 @@ class Trade extends Component {
         dataIndex: 'exType',
         key: 'exType',
         render: (text, record) => {
-          if(text === 0) {
+          if (text === 0) {
             return <span className="font-color-green">买入</span>;
           } else {
             return <span className="font-color-red">卖出</span>;
@@ -409,13 +519,13 @@ class Trade extends Component {
                 详情
               </Button>
             );
-          } else if(record.status === 0 || record.status === 1) {
+          } else if (record.status === 0 || record.status === 1) {
             return (
               <Button type="primary" onClick={this.cancelTrade.bind(this, record.orderNo)}>
                 撤单
               </Button>
             );
-          }else {
+          } else {
             return '--';
           }
         }
@@ -455,7 +565,7 @@ class Trade extends Component {
                 <Dropdown
                   overlay={
                     <Menu onClick={this.switchMarket}>
-                      {['optional', 'BTC', 'ETH', 'USDT'].map(market => {
+                      {['optional', 'USDT', 'ETH', 'BTC'].map(market => {
                         return (
                           <Menu.Item key={market}>
                             {market === 'optional' ? '自选' : `${market}市场`}
@@ -833,7 +943,10 @@ class Trade extends Component {
             <Tabs
               defaultActiveKey="0"
               onChange={status => {
-                this.findOrderList({ marketName, coinName, status });
+                if (sessionStorage.getItem('account')) {
+                  this.findOrderList({ marketName, coinName, status });
+                }
+                this.setState({ orderStatus: status });
               }}
             >
               <TabPane tab="我的挂单" key="0">
