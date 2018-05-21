@@ -1,5 +1,5 @@
 const IMAGES_ADDRESS = 'https://images.bbex.one';
-const WS_ADDRESS = 'ws://10.1.1.210:8083';
+const WS_ADDRESS = 'wss://api.bbex.one';
 
 export {
     IMAGES_ADDRESS,
