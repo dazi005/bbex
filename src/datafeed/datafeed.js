@@ -10,10 +10,9 @@
 
 import datafeedConfig from './datafeedConfig';
 import datafeedUtil from './datafeedUtil';
-import $ from 'jquery';
+import request from '../utils/request';
 
 const datafeeds = symbol => {
-
   var Datafeeds = {};
 
   const { configJSON, symbolResolveJSON } = datafeedConfig(symbol);
@@ -94,21 +93,22 @@ const datafeeds = symbol => {
   };
 
   Datafeeds.UDFCompatibleDatafeed.prototype._send = function(url, params) {
-    var request = url;
     if (params) {
       for (var i = 0; i < Object.keys(params).length; ++i) {
         var key = Object.keys(params)[i];
         var value = encodeURIComponent(params[key]);
-        request += (i === 0 ? '?' : '&') + key + '=' + value;
+        url += (i === 0 ? '?' : '&') + key + '=' + value;
       }
     }
 
-    this._logMessage('New request: ' + request);
-
-    return $.ajax({
-      type: 'GET',
-      url: request,
-      contentType: 'text/plain'
+    this._logMessage('New request: ' + url);
+    return request(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'text/explain'
+      }
+    }).then(json => {
+      console.log('===============Fetch: ', json);
     });
   };
 
@@ -417,27 +417,27 @@ const datafeeds = symbol => {
 
     var httpGetData = function() {
       that
-        ._send(that._datafeedURL + that._historyURL, {
+        ._send(that._datafeedURL, {
           symbol: symbolInfo.ticker.toUpperCase(),
           resolution: resolution,
           from: rangeStartDate,
           to: rangeEndDate
         })
-        .done(function(response) {
+        .then(function(response) {
           dealSuccess(response);
         })
-        .fail(function(arg) {
+        .catch(function(arg) {
           if (!!onErrorCallback) {
             onErrorCallback('network error: ' + JSON.stringify(arg));
           }
         });
     };
 
-    // httpGetData();
+    httpGetData();
     websocketGetData();
 
     var dealSuccess = function(data) {
-      if(!data) {
+      if (!data) {
         return;
       }
       var data = JSON.parse(data);
@@ -530,7 +530,7 @@ const datafeeds = symbol => {
     onErrorCallback
   ) {
     this._send(this._datafeedURL + '/quotes', { symbols: symbols })
-      .done(function(response) {
+      .then(function(response) {
         var data = JSON.parse(response);
         if (data.s == 'ok') {
           //	JSON format is {s: "status", [{s: "symbol_status", n: "symbol_name", v: {"field1": "value1", "field2": "value2", ..., "fieldN": "valueN"}}]}
@@ -543,7 +543,7 @@ const datafeeds = symbol => {
           }
         }
       })
-      .fail(function(arg) {
+      .catch(function(arg) {
         if (onErrorCallback) {
           onErrorCallback('network error: ' + arg);
         }

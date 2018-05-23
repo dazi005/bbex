@@ -338,9 +338,7 @@ class TradeContainer extends Component {
   }
 
   componentWillUnmount() {
-    if (JSON.parse(sessionStorage.getItem('account'))) {
-      this.state.ws.close();
-    }
+    this.state.ws && this.state.ws.close();
   }
 
   //根据币种和交易类型分页获取广告列表
@@ -1060,9 +1058,5 @@ class TradeContainer extends Component {
     );
   }
 }
-
-TradeContainer.contextTypes = {
-  request: PropTypes.func.isRequired
-};
 
 export default TradeContainer;

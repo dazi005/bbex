@@ -30,7 +30,7 @@ class TradeBox extends Component {
       method: 'GET'
     }).then(json => {
       if (json.code === 10000000) {
-        this.setState({ [coinType]: json.data.volume });
+        this.setState({ [coinType]: (json.data && json.data.volume) || 0 });
       } else {
         message.error(json.msg);
       }

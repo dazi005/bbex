@@ -1,34 +1,42 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
-import { message } from 'antd';
+import { Modal, message } from 'antd';
 import request from '../utils/request';
 
 import logo from '../logo.svg';
 
 class Container extends Component {
-  getChildContext() {
-    return { request: this.request };
-  }
-
   constructor(props, context) {
     super(props, context);
-    this.request = props.request;
+    window.request = (url, options) => {
+      return new Promise((resolve, reject) => {
+        props.request(url, options).then(json => {
+          if (json.code === -5) {
+            this.setState({ isLogin: false });
+            sessionStorage.clear();
+            props.history.push('/signin');
+          } else {
+            resolve(json);
+          }
+        });
+      });
+    };
   }
 
   state = {
-    login: false
+    isLogin: false
   };
 
   componentDidMount() {
-    const login = !!sessionStorage.getItem('account');
-    this.setState({ login }); //判断登录状态
+    const isLogin = !!sessionStorage.getItem('account');
+    this.setState({ isLogin }); //判断登录状态
   }
 
   componentWillUpdate() {
-    const login = !!sessionStorage.getItem('account');
-    if (login !== this.state.login) {
-      this.setState({ login }); //切换登录状态
+    const isLogin = !!sessionStorage.getItem('account');
+    if (isLogin !== this.state.isLogin) {
+      this.setState({ isLogin }); //切换登录状态
     }
   }
 
@@ -44,7 +52,7 @@ class Container extends Component {
   };
 
   render() {
-    const { login } = this.state;
+    const { isLogin } = this.state;
     return (
       <div className="container">
         <header className="header">
@@ -59,7 +67,7 @@ class Container extends Component {
               <Link to="/c2c">C2C</Link>
             </li>
           </ul>
-          {!login && (
+          {!isLogin && (
             <div className="user-status">
               <i className="iconfont icon-yonghu" />
               <Link to="/signin">登录</Link>
@@ -67,7 +75,7 @@ class Container extends Component {
               <Link to="/register">注册</Link>
             </div>
           )}
-          {login && (
+          {isLogin && (
             <div className="user-status">
               <div className="select-bar">
                 <i className="iconfont icon-yonghu" />
@@ -175,14 +183,5 @@ class Container extends Component {
     );
   }
 }
-
-Container.propTypes = {
-  request: PropTypes.func.isRequired,
-  children: PropTypes.element.isRequired
-};
-
-Container.childContextTypes = {
-  request: PropTypes.func.isRequired
-};
 
 export default withRouter(Container);

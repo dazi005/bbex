@@ -3,7 +3,6 @@ import { Tabs, Input, Table, Menu, Dropdown, Icon, Tooltip, Button, Select, mess
 import NoticeBar from '../../components/noticeBar';
 import classnames from 'classnames';
 import Scrollbars from 'react-custom-scrollbars';
-import request from '../../utils/request';
 import { stampToDate, getQueryString } from '../../utils';
 import { WS_ADDRESS } from '../../utils/constants';
 import TradeBox from './TradeBox';
@@ -31,6 +30,8 @@ class Trade extends Component {
     orderStatus: 0
   };
 
+  request = window.request;
+
   favoriteCoins = localStorage.getItem('favoriteCoins')
     ? JSON.parse(localStorage.getItem('favoriteCoins'))
     : [];
@@ -45,7 +46,7 @@ class Trade extends Component {
 
   // 获取USDT汇率
   getRate = () => {
-    request('/index/lastPrice', {
+    this.request('/index/lastPrice', {
       method: 'GET'
     }).then(json => {
       if (json.code === 10000000) {
@@ -60,7 +61,7 @@ class Trade extends Component {
   // 未完成订单
   findOrderList = ({ marketName, coinName, status }) => {
     const { id } = JSON.parse(sessionStorage.getItem('account'));
-    request('/order/findOrderProposeList', {
+    this.request('/order/findOrderProposeList', {
       body: {
         status,
         userId: id,
@@ -82,7 +83,7 @@ class Trade extends Component {
 
   // 撤单
   cancelTrade = orderNo => {
-    request(`/trade/cancelTrade/${orderNo}`, {
+    this.request(`/trade/cancelTrade/${orderNo}`, {
       method: 'GET'
     }).then(json => {
       if (json.code === 10000000) {
@@ -95,7 +96,7 @@ class Trade extends Component {
 
   // 订单详情
   getOrderDetail = orderNo => {
-    request(`/coin/tradeOrderDetail/${orderNo}`, {
+    this.request(`/coin/tradeOrderDetail/${orderNo}`, {
       method: 'GET'
     }).then(json => {
       if (json.code === 10000000) {
@@ -174,7 +175,7 @@ class Trade extends Component {
       if (record.matchStreamVO) {
         const matchVo = record.matchStreamVO;
         coinList[marketName] = coinList[marketName].map(item => {
-          if(matchVo.coinOther === item.coinOther) {
+          if (matchVo.coinOther === item.coinOther) {
             item.latestPrice = matchVo.price;
           }
           return item;
@@ -202,7 +203,7 @@ class Trade extends Component {
         });
         streamList.unshift(record.matchStreamVO);
       }
-      
+
       this.setState({ coinList, tradeList, streamList });
     };
 
@@ -291,7 +292,7 @@ class Trade extends Component {
 
   // 获取币种列表
   getCoinList = () => {
-    request('/index/allTradeExpair', {
+    this.request('/index/allTradeExpair', {
       method: 'GET'
     }).then(json => {
       if (json.code === 10000000) {
@@ -317,7 +318,7 @@ class Trade extends Component {
 
   // 获取交易列表
   getTradeList = ({ coinMain, coinOther }) => {
-    request('/index/buyAndSellerOrder', {
+    this.request('/index/buyAndSellerOrder', {
       method: 'GET',
       body: { coinMain, coinOther }
     }).then(json => {
@@ -331,7 +332,7 @@ class Trade extends Component {
 
   // 获取流水记录
   getStream = ({ coinMain, coinOther }) => {
-    request('/index/findMatchStream', {
+    this.request('/index/findMatchStream', {
       method: 'GET',
       body: { coinMain, coinOther }
     }).then(json => {
@@ -413,7 +414,7 @@ class Trade extends Component {
 
   requestMerge = ({ type, length }) => {
     const { marketName, coinName } = this.state;
-    request('/index/merge', {
+    this.request('/index/merge', {
       method: 'GET',
       body: {
         coinMain: marketName,
@@ -539,19 +540,15 @@ class Trade extends Component {
       change: 0,
       trend: 'green'
     };
-    if (coinList && coinList.length > 0) {
-      Object.values(coinList).forEach(value => {
-        value.forEach(coin => {
-          if (coin.coinOther === coinName) {
-            currentCoin = Object.assign(currentCoin, coin);
-            currentCoin.change = (coin.latestPrice - coin.firstPrice) / coin.firstPrice || 0;
-            currentCoin.trend = currentCoin.change > 0 ? 'green' : 'red';
-          }
-        });
+    if (coinList && coinList[marketName] && coinList[marketName].length > 0) {
+      coinList[marketName].forEach(coin => {
+        if (coin.coinOther === coinName) {
+          currentCoin = Object.assign({}, currentCoin, coin);
+          currentCoin.change = (coin.latestPrice - coin.firstPrice) / coin.firstPrice || 0;
+          currentCoin.trend = currentCoin.change > 0 ? 'green' : 'red';
+        }
       });
     }
-
-    console.log('----currentCoin: ', currentCoin);
 
     return (
       <div className="content trade">
@@ -735,13 +732,13 @@ class Trade extends Component {
               </header>
               <div className="trade-plate-tit Kline">
                 <div className="trade-plate-tit-cell">
-                  最高<strong>{currentCoin.highestPrice}</strong>
+                  最高<strong>{currentCoin.highestPrice || '0.00000000'}</strong>
                 </div>
                 <div className="trade-plate-tit-cell">
-                  最低<strong>{currentCoin.lowerPrice}</strong>
+                  最低<strong>{currentCoin.lowerPrice || '0.00000000'}</strong>
                 </div>
                 <div className="trade-plate-tit-cell">
-                  成交量<strong>{currentCoin.dayCount}</strong>
+                  成交量<strong>{currentCoin.dayCount || '0.00000000'}</strong>
                 </div>
                 <div className="trade-plate-tit-cell">
                   涨跌幅
@@ -838,24 +835,26 @@ class Trade extends Component {
               )}
               {listType === -1 ? (
                 <div className="trade-plate-list">
-                  <table>
-                    <tbody>
-                      {tradeList &&
-                        tradeList.sellOrderVOList.map((record, index, arr) => {
-                          const length = arr.length < 15 ? arr.length : 15;
-                          return (
-                            index < length && (
-                              <tr key={index}>
-                                <td className="font-color-red">卖出{length - index}</td>
-                                <td>{record.price}</td>
-                                <td>{record.volume}</td>
-                                {false && <td className="font-color-red">{record.sumTotal}</td>}
-                              </tr>
-                            )
-                          );
-                        })}
-                    </tbody>
-                  </table>
+                  <div className="trade-plate-list-wrap">
+                    <table>
+                      <tbody>
+                        {tradeList &&
+                          tradeList.sellOrderVOList.map((record, index, arr) => {
+                            const length = arr.length < 15 ? arr.length : 15;
+                            return (
+                              index < length && (
+                                <tr key={index}>
+                                  <td className="font-color-red">卖出{length - index}</td>
+                                  <td>{record.price}</td>
+                                  <td>{record.volume}</td>
+                                  {false && <td className="font-color-red">{record.sumTotal}</td>}
+                                </tr>
+                              )
+                            );
+                          })}
+                      </tbody>
+                    </table>
+                  </div>
                   <div className="latest-price">
                     <span>
                       <i className="iconfont icon-xinhao font-color-green" />最新价
@@ -888,23 +887,25 @@ class Trade extends Component {
                       />
                     </span>
                   </div>
-                  <table>
-                    <tbody>
-                      {tradeList &&
-                        tradeList.buyOrderVOList.map((record, index) => {
-                          return (
-                            index < 15 && (
-                              <tr key={index}>
-                                <td className="font-color-green">买入{index + 1}</td>
-                                <td>{record.price}</td>
-                                <td>{record.volume}</td>
-                                {false && <td className="font-color-green">{record.sumTotal}</td>}
-                              </tr>
-                            )
-                          );
-                        })}
-                    </tbody>
-                  </table>
+                  <div className="trade-plate-list-wrap">
+                    <table>
+                      <tbody>
+                        {tradeList &&
+                          tradeList.buyOrderVOList.map((record, index) => {
+                            return (
+                              index < 15 && (
+                                <tr key={index}>
+                                  <td className="font-color-green">买入{index + 1}</td>
+                                  <td>{record.price}</td>
+                                  <td>{record.volume}</td>
+                                  {false && <td className="font-color-green">{record.sumTotal}</td>}
+                                </tr>
+                              )
+                            );
+                          })}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               ) : (
                 <div className="trade-plate-list">

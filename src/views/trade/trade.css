@@ -115,11 +115,20 @@
     height: 380px;
 }
 .trade-plate-list {
+    position: relative;
     height: 865px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 .trade-plate-container table,
 .trade-plate-list table {
     width: 100%;
+}
+.trade-plate-list-wrap {
+    flex-basis: 48%;
+    border: #F00;
 }
 .trade-plate-container tr,
 .trade-plate-list tr {
@@ -216,7 +225,7 @@
 .latest-price {
     display: flex;
     justify-content: space-around;
-    height: 40px;
+    flex-basis: 40px;
     margin: 10px;
     line-height: 40px;
     font-size: 18px;

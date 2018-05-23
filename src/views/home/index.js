@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Tabs, Input, Table, message } from 'antd';
 import { Carousel } from 'react-responsive-carousel';
 import classnames from 'classnames';
 import NoticeBar from '../../components/noticeBar';
-import request from '../../utils/request';
 
 import './carousel.css';
 import './home.css';
@@ -31,6 +29,8 @@ class Home extends Component {
     tradeExpair: null
   };
 
+  request = window.request;
+
   componentWillMount() {
     this.getBanner();
     this.getTradeExpair();
@@ -38,7 +38,7 @@ class Home extends Component {
 
   //获取banner图
   getBanner = () => {
-    request('/cms/banner/list', {
+    this.request('/cms/banner/list', {
       method: 'GET',
       body: {
         language: 'zh_CN'
@@ -54,7 +54,7 @@ class Home extends Component {
 
   //市场币种列表
   getTradeExpair = () => {
-    request('/index/allTradeExpair', {
+    this.request('/index/allTradeExpair', {
       method: 'GET'
     }).then(json => {
       if (json.code === 10000000) {
@@ -244,9 +244,5 @@ class Home extends Component {
     );
   }
 }
-
-Home.contextTypes = {
-  request: PropTypes.func.isRequired
-};
 
 export default Home;
