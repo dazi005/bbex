@@ -369,6 +369,7 @@ const datafeeds = symbol => {
     onDataCallback,
     onErrorCallback
   ) {
+    console.log("symbolInfo: ", symbolInfo);
     let from = rangeStartDate * 1000;
     let to = rangeEndDate * 1000;
     let resolutionTime = datafeedUtil.filteringTime(resolution);
@@ -393,6 +394,8 @@ const datafeeds = symbol => {
       }
 
       window.ws.onmessage = function(e) {
+        const record = JSON.parse(e.data);
+        console.log('Kline!!!!!!!!!!record: ', record);
         // JSON格式
         let websocketParams = {
           data: e.data,
@@ -415,25 +418,25 @@ const datafeeds = symbol => {
       };
     };
 
-    var httpGetData = function() {
-      that
-        ._send(that._datafeedURL, {
-          symbol: symbolInfo.ticker.toUpperCase(),
-          resolution: resolution,
-          from: rangeStartDate,
-          to: rangeEndDate
-        })
-        .then(function(response) {
-          dealSuccess(response);
-        })
-        .catch(function(arg) {
-          if (!!onErrorCallback) {
-            onErrorCallback('network error: ' + JSON.stringify(arg));
-          }
-        });
-    };
+    // var httpGetData = function() {
+    //   that
+    //     ._send(that._datafeedURL, {
+    //       symbol: symbolInfo.ticker.toUpperCase(),
+    //       resolution: resolution,
+    //       from: rangeStartDate,
+    //       to: rangeEndDate
+    //     })
+    //     .then(function(response) {
+    //       dealSuccess(response);
+    //     })
+    //     .catch(function(arg) {
+    //       if (!!onErrorCallback) {
+    //         onErrorCallback('network error: ' + JSON.stringify(arg));
+    //       }
+    //     });
+    // };
 
-    httpGetData();
+    // httpGetData();
     websocketGetData();
 
     var dealSuccess = function(data) {

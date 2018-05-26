@@ -70,6 +70,10 @@ class Trade extends Component {
       }
     }).then(json => {
       if (json.code === 10000000) {
+        json.data = json.data.map(order => {
+          order.key = order.orderNo;
+          return order;
+        })
         if (status === 0) {
           this.setState({ pendingOrderList: json.data });
         } else {
