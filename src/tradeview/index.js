@@ -4,21 +4,15 @@ import tradeviewPageUtil from './TradeviewPageUtil';
 import { WS_ADDRESS } from '../utils/constants';
 
 class TradeviewPage extends Component {
-  websocketUrl = `${WS_ADDRESS}/bbex/websocket?${this.props.coin}_${this.props.market}_kline`;
+  websocketUrl = `${WS_ADDRESS}/bbex/klinesocket`;
 
   componentDidMount() {
     this.tradingViewGetReady();
     this.websocketStart();
 
-    window.ws.onopen = evt => {
-      console.log('Kline Connection open ...');
-      window.ws.send('Hello bbex!');
-    };
-
-    window.ws.onmessage = evt => {
-      const record = JSON.parse(evt.data);
-      console.log('Kline!!!!!!!!!!record: ', record);
-    };
+    // window.ws.onopen = evt => {
+    //   console.log('Kline Connection open ...');
+    // };
 
     window.ws.onclose = evt => {
       console.log('Kline Connection closed.');
@@ -26,10 +20,8 @@ class TradeviewPage extends Component {
   }
 
   componentWillUpdate(nextProps, nextState) {
-    const { market, coin } = this.props;
-    const { marketName, coinName } = nextProps;
-    if (marketName !== market || coinName !== coin) {
-      // this.tradingViewGetReady();
+    if(this.props !== nextProps) {
+      const { market, coin } = this.props;
     }
   }
 

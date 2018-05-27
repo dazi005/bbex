@@ -20,14 +20,20 @@ class Trade extends Component {
     coinList: null,
     marketName: getQueryString('market') || 'USDT',
     coinName: getQueryString('coin') || 'LOOM',
-    tradeList: null,
+    mainVolume: 0,
+    coinVolume: 0,
+    tradeList: {
+      buyOrderVOList: [],
+      sellOrderVOList: []
+    },
     streamList: null,
     pendingOrderList: [],
     completedOrderList: [],
     coinPrice: '0.00000878 &asymp;￥0.54',
     listType: -1,
     mergeNumber: 8,
-    orderStatus: 0
+    orderStatus: 0,
+    coinDetail: '',
   };
 
   request = window.request;
@@ -73,12 +79,25 @@ class Trade extends Component {
         json.data = json.data.map(order => {
           order.key = order.orderNo;
           return order;
-        })
+        });
         if (status === 0) {
           this.setState({ pendingOrderList: json.data });
         } else {
           this.setState({ completedOrderList: json.data });
         }
+      } else {
+        message.error(json.msg);
+      }
+    });
+  };
+
+  // 获取币种详情
+  getCoinDetail = (coinName) => {
+    this.request(`/coin/detail/${coinName}`, {
+      method: 'GET'
+    }).then(json => {
+      if (json.code === 10000000) {
+        this.setState({ coinDetail: json.data });
       } else {
         message.error(json.msg);
       }
@@ -122,59 +141,39 @@ class Trade extends Component {
       coinMain: marketName,
       coinOther: coinName
     });
+    this.getCoinDetail(coinName);
 
     //websocket 链接
-    this.openTradeWebsocket();
+    this.openStreamWebsocket();
+    this.openBuyAndSellWebsocket();
     if (sessionStorage.getItem('account')) {
-      this.openOrderWebsocket();
+      this.openUserWebsocket();
     }
   }
 
-  openTradeWebsocket = () => {
+  openStreamWebsocket = () => {
     //打开websockets
-    const { marketName, coinName } = this.state;
-    const ws = new window.ReconnectingWebSocket(
-      `${WS_ADDRESS}/bbex/websocket?${coinName}_${marketName}`
-    );
-    ws.onopen = evt => {
-      console.log('trade Websocket Connection open ...');
+    const streamWS = new window.ReconnectingWebSocket(`${WS_ADDRESS}/bbex/platsocket`);
+    streamWS.onopen = evt => {
+      console.log('stream Websocket Connection open ...');
+      let t = setInterval(() => {
+        if(!streamWS) {
+          clearInterval(t);
+          return;
+        }
+        streamWS.send('ping');
+      }, 1000 * 3);
     };
 
-    ws.onmessage = evt => {
+    streamWS.onmessage = evt => {
+      if (evt.data === 'pong') {
+        console.log('stream: ', evt.data);
+        return;
+      }
       const record = JSON.parse(evt.data);
-      console.log('======trade record: ', record);
+      console.log('======stream record: ', record);
 
-      const { coinList, tradeList, streamList } = this.state;
-
-      let isnNewRecord = true;
-
-      if (record.buyOrderVO) {
-        tradeList.buyOrderVOList = tradeList.buyOrderVOList.map(item => {
-          if (item.price === record.buyOrderVO.price) {
-            item.volume += record.buyOrderVO.volume;
-            isnNewRecord = false;
-          }
-          return item;
-        });
-        if (isnNewRecord) {
-          tradeList.buyOrderVOList.push(record.buyOrderVO);
-          tradeList.buyOrderVOList = tradeList.buyOrderVOList.sort((x, y) => y.price - x.price);
-        }
-      }
-
-      if (record.sellOrderVO) {
-        tradeList.sellOrderVOList = tradeList.sellOrderVOList.map(item => {
-          if (item.price === record.sellOrderVO.price) {
-            item.volume += record.sellOrderVO.volume;
-            isnNewRecord = false;
-          }
-          return item;
-        });
-        if (isnNewRecord) {
-          tradeList.sellOrderVOList.push(record.sellOrderVO);
-          tradeList.sellOrderVOList = tradeList.sellOrderVOList.sort((x, y) => y.price - x.price);
-        }
-      }
+      const { coinList, tradeList, streamList, marketName } = this.state;
 
       if (record.matchStreamVO) {
         const matchVo = record.matchStreamVO;
@@ -211,54 +210,159 @@ class Trade extends Component {
       this.setState({ coinList, tradeList, streamList });
     };
 
-    ws.onclose = evt => {
-      console.log('trade Websocket Connection closed.');
+    streamWS.onclose = evt => {
+      console.log('stream Websocket Connection closed.');
     };
 
-    ws.onerror = evt => {
+    streamWS.onerror = evt => {
       console.log(evt);
     };
 
-    this.setState({ tradeWS: ws });
+    this.setState({ streamWS });
   };
 
-  openOrderWebsocket = () => {
+  openBuyAndSellWebsocket = () => {
     //打开websockets
     const { marketName, coinName } = this.state;
-    const { id } = JSON.parse(sessionStorage.getItem('account'));
-    const ws = new window.ReconnectingWebSocket(
-      `${WS_ADDRESS}/bbex/websocket?${coinName}_${marketName}_${id}`
+    const buyandsellWS = new window.ReconnectingWebSocket(
+      `${WS_ADDRESS}/bbex/buysellsocket?${coinName}_${marketName}`
     );
-    ws.onopen = evt => {
-      console.log('order Websocket Connection open ...');
+    buyandsellWS.onopen = evt => {
+      console.log('buyandsell Websocket Connection open ...');
+      let t = setInterval(() => {
+        if(!buyandsellWS) {
+          clearInterval(t);
+          return;
+        }
+        buyandsellWS.send('ping');
+      }, 1000 * 3);
     };
 
-    ws.onmessage = evt => {
+    buyandsellWS.onmessage = evt => {
+      if (evt.data === 'pong') {
+        console.log('buyandsell: ', evt.data);
+        return;
+      }
       const record = JSON.parse(evt.data);
-      console.log('======order record: ', record);
+      console.log('======buyandsell record: ', record);
+
+      const { tradeList } = this.state;
+
+      let isnNewRecord = true;
+
+      if (record.buyOrderVO) {
+        if (tradeList && tradeList.buyOrderVOList && tradeList.buyOrderVOList.length > 0) {
+          tradeList.buyOrderVOList = tradeList.buyOrderVOList.map(item => {
+            if (item.price === record.buyOrderVO.price) {
+              item.volume += record.buyOrderVO.volume;
+              isnNewRecord = false;
+            }
+            return item;
+          });
+        }
+        if (isnNewRecord) {
+          tradeList.buyOrderVOList.push(record.buyOrderVO);
+          tradeList.buyOrderVOList = tradeList.buyOrderVOList.sort((x, y) => y.price - x.price);
+        }
+      }
+
+      if (record.sellOrderVO) {
+        if (tradeList && tradeList.sellOrderVOList && tradeList.sellOrderVOList.length > 0) {
+          tradeList.sellOrderVOList = tradeList.sellOrderVOList.map(item => {
+            if (item.price === record.sellOrderVO.price) {
+              item.volume += record.sellOrderVO.volume;
+              isnNewRecord = false;
+            }
+            return item;
+          });
+        }
+        if (isnNewRecord) {
+          tradeList.sellOrderVOList.push(record.sellOrderVO);
+          tradeList.sellOrderVOList = tradeList.sellOrderVOList.sort((x, y) => y.price - x.price);
+        }
+      }
+
+      this.setState({ tradeList });
+    };
+
+    buyandsellWS.onclose = evt => {
+      console.log('buyandsell Websocket Connection closed.');
+    };
+
+    buyandsellWS.onerror = evt => {
+      console.log(evt);
+    };
+
+    this.setState({ buyandsellWS });
+  };
+
+  openUserWebsocket = () => {
+    //打开websockets
+    const { id } = JSON.parse(sessionStorage.getItem('account'));
+    const userWS = new window.ReconnectingWebSocket(`${WS_ADDRESS}/bbex/bbusersocket?${id}`);
+    userWS.onopen = evt => {
+      console.log('user Websocket Connection open ...');
+      let t = setInterval(() => {
+        if(!userWS) {
+          clearInterval(t);
+          return;
+        }
+        userWS.send(`ping_${id}`);
+      }, 1000 * 3);
+    };
+
+    userWS.onmessage = evt => {
+      if (evt.data === 'pong') {
+        console.log('user: ', evt.data);
+        return;
+      }
+      const { orderVo, coinMainVolume, coinOtherVolume } = JSON.parse(evt.data);
+      console.log('======user record: ', JSON.parse(evt.data));
 
       const { pendingOrderList } = this.state;
 
-      pendingOrderList.unshift(record);
+      let isNewRecord = true;
+      const pendingList = pendingOrderList.filter(order => {
+        if (order.orderNo === orderVo.orderNo) {
+          isNewRecord = false;
+          if (orderVo.status !== 2) {
+            order = orderVo;
+          }
+          return order.status !== 2;
+        }
+        return true;
+      });
 
-      this.setState({ pendingOrderList });
+      if (isNewRecord) {
+        orderVo.key = orderVo.orderNo;
+        pendingList.unshift(orderVo);
+      }
+
+      const { mainVolume, coinVolume } = this.state;
+
+      this.setState({
+        pendingOrderList: pendingList,
+        mainVolume: coinMainVolume ? coinMainVolume.volume : mainVolume,
+        coinVolume: coinOtherVolume ? coinOtherVolume.volume : coinVolume
+      });
     };
 
-    ws.onclose = evt => {
-      console.log('order Websocket Connection closed.');
+    userWS.onclose = evt => {
+      console.log('user Websocket Connection closed.');
     };
 
-    ws.onerror = evt => {
+    userWS.onerror = evt => {
       console.log(evt);
     };
 
-    this.setState({ orderWS: ws });
+    this.setState({ userWS });
   };
 
   componentWillUnmount() {
     if (JSON.parse(sessionStorage.getItem('account'))) {
-      this.state.tradeWS.close();
-      this.state.orderWs.close();
+      this.state.streamWS.close();
+      this.state.buyandsellWS.close();
+      this.state.userWs.close();
     }
   }
 
@@ -276,6 +380,10 @@ class Trade extends Component {
         coinMain: marketName,
         coinOther: coinName
       });
+
+      // 重新建 buyandsell websocket
+      this.state.buyandsellWS.close();
+      this.openBuyAndSellWebsocket();
     }
   }
 
@@ -396,6 +504,8 @@ class Trade extends Component {
       marketName: market,
       coinName: coin.coinOther
     });
+    //重新获取币种详情
+    this.getCoinDetail(coin.coinOther);
 
     if (sessionStorage.getItem('account')) {
       this.findOrderList({
@@ -453,12 +563,15 @@ class Trade extends Component {
       coinList,
       marketName,
       coinName,
+      mainVolume,
+      coinVolume,
       tradeList,
       streamList,
       pendingOrderList,
       completedOrderList,
       coinPrice,
-      listType
+      listType,
+      coinDetail
     } = this.state;
 
     let pairList = [];
@@ -478,7 +591,7 @@ class Trade extends Component {
         title: '委托时间',
         dataIndex: 'time',
         key: 'time',
-        render: (text, record) => stampToDate(Number(text), 'YYYY-MM-DD hh:mm:ss')
+        render: (text, record) => stampToDate(Number(text))
       },
       {
         title: '委托类别',
@@ -724,11 +837,7 @@ class Trade extends Component {
                 <div className="trade-plate-header-right">
                   <Tooltip
                     placement="rightTop"
-                    title={`波场TRON是全球最大的区块链去中心化应用操作系统,
-                    波场TRON以推动互联网去中心化为己任，
-                    致力于为去中心化互联网搭建基础设施。
-                    旗下的波场TRON协议是全球最大的基于区块链的去中心化应用操作系统协议之一，
-                    为协议上的去中心化应用运行提供高吞吐，高扩展，高可靠性的底层公链支持。`}
+                    title={coinDetail}
                   >
                     <Button type="introduction">币种介绍</Button>
                   </Tooltip>
@@ -758,10 +867,22 @@ class Trade extends Component {
             <div className="trade-plate">
               <Tabs defaultActiveKey="1">
                 <TabPane tab="限价交易" key="1">
-                  <TradeBox marketName={marketName} coinName={coinName} tradeType="limit" />
+                  <TradeBox
+                    marketName={marketName}
+                    coinName={coinName}
+                    mainVolume={mainVolume}
+                    coinVolume={coinVolume}
+                    tradeType="limit"
+                  />
                 </TabPane>
                 <TabPane tab="市价交易" key="2">
-                  <TradeBox marketName={marketName} coinName={coinName} tradeType="market" />
+                  <TradeBox
+                    marketName={marketName}
+                    coinName={coinName}
+                    mainVolume={mainVolume}
+                    coinVolume={coinVolume}
+                    tradeType="market"
+                  />
                 </TabPane>
                 {false && (
                   <TabPane
@@ -955,10 +1076,18 @@ class Trade extends Component {
               }}
             >
               <TabPane tab="我的挂单" key="0">
-                <Table columns={orderColumns} dataSource={pendingOrderList} pagination={false} />
+                <Scrollbars>
+                  <Table columns={orderColumns} dataSource={pendingOrderList} pagination={false} />
+                </Scrollbars>
               </TabPane>
               <TabPane tab="成交历史" key="1">
-                <Table columns={orderColumns} dataSource={completedOrderList} pagination={false} />
+                <Scrollbars>
+                  <Table
+                    columns={orderColumns}
+                    dataSource={completedOrderList}
+                    pagination={false}
+                  />
+                </Scrollbars>
               </TabPane>
             </Tabs>
           </div>

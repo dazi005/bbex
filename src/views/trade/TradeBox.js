@@ -11,6 +11,16 @@ class TradeBox extends Component {
     coinVolume: 0
   };
 
+  componentWillReceiveProps(nextProps, nextState) {
+    if (
+      this.props.mainVolume !== nextProps.mainVolume ||
+      this.props.coinVolume !== nextProps.coinVolume
+    ) {
+      const { mainVolume, coinVolume } = nextProps;
+      this.setState({ mainVolume, coinVolume });
+    }
+  }
+
   componentWillMount() {
     if (sessionStorage.getItem('account')) {
       const { tradeType, marketName, coinName } = this.props;

@@ -7,6 +7,14 @@
   float: none;
 }
 
+.chart-page .chart-container {
+  border-color: #292f3d;
+}
+
+.header-chart-panel-content .space-single .button {
+  background: #292f3d;
+  border-color: #292f3d;
+}
 .header-chart-panel-content .space-single .button.select {
-  background: #ececec;
+  background: rgb(92, 104, 124);
 }

@@ -12,7 +12,7 @@ const datafeedConfig = params => {
     datafeed: new Datafeeds.UDFCompatibleDatafeed(serverUrl, pushInterval),
     width: '100%',
     height: '380',
-    // libraryPath: 'http://192.168.6.75/charting_library/',
+    // libraryPath: '/charting_library/',
     locale: 'zh',
     drawings_access: {
       type: 'black',
@@ -47,39 +47,8 @@ const datafeedConfig = params => {
     charts_storage_api_version: '1.1',
     client_id: 'tradingview.com',
     user_id: 'public_user_id',
-    /*         time_frames: [
-              { text: "1m", resolution: "5s", description: "1 m" },
-              { text: "1h", resolution: "1", description: "1 h" },
-              { text: "1d", resolution: "5", description: "1 Days" },
-            ], */
-    // overrides: {//k线的颜色
-    //   "paneProperties.background": "#292f3d",
-    //   "paneProperties.vertGridProperties.color": "#292f3d",
-    //   "paneProperties.horzGridProperties.color": "rgba(255,255,255,0.1)",
-    //   "symbolWatermarkProperties.transparency": 90,
-    //   "scalesProperties.textColor": "#AAA",
-    //   "volumePaneSize": "medium",
-    //   "paneProperties.legendProperties.showLegend": false,//折叠信息
-    //   "mainSeriesProperties.candleStyle": {
-    //     upColor: "#a0d75b",
-    //     downColor: "#ce5277",
-    //     drawWick: !0,
-    //     drawBorder: !0,
-    //     borderColor: "#f60000",
-    //     borderUpColor: "#a0d75b",
-    //     borderDownColor: "#ce5277",
-    //     wickColor: "#737375",
-    //     wickUpColor: "#a0d75b",
-    //     wickDownColor: "#ce5277",
-    //     barColorsOnPrevClose: !1
-    //   },
-    //   "mainSeriesProperties.areaStyle.color1": "#45608e",
-    //   "mainSeriesProperties.areaStyle.color2": "#131c2b",
-    //   "mainSeriesProperties.areaStyle.linecolor": "#52659d"
-    // },
-
     overrides: {
-      'paneProperties.background': '#222222',
+      'paneProperties.background': '#292f3d',
       'paneProperties.vertGridProperties.color': '#454545',
       'paneProperties.horzGridProperties.color': '#454545',
       'symbolWatermarkProperties.transparency': 90,
@@ -96,7 +65,7 @@ const datafeedConfig = params => {
   };
 };
 
-const chartReady = widget => {
+const chartReady = (widget) => {
   let buttonArr = [
     {
       value: '1',

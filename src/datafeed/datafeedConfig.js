@@ -17,11 +17,7 @@ const config = symbol => {
     minmov2: 0,
     pointvalue: 1,
     session: '0930-1600',
-
-    // "has_seconds": false,
-    // "seconds_multipliers": ["1S", "5S", "15S", "30S"],
     has_intraday: true,
-    // "intraday_multipliers": ["120", "60", "30", "5", "1"],
     has_daily: true,
     has_empty_bars: false,
     has_no_volume: false,

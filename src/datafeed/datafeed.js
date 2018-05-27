@@ -11,6 +11,7 @@
 import datafeedConfig from './datafeedConfig';
 import datafeedUtil from './datafeedUtil';
 import request from '../utils/request';
+import { stampToDate } from '../utils';
 
 const datafeeds = symbol => {
   var Datafeeds = {};
@@ -40,7 +41,7 @@ const datafeeds = symbol => {
     return {
       supports_search: false,
       supports_group_request: true,
-      supported_resolutions: ['1', '5', '15', '30', '60', '1D'],
+      supported_resolutions: ['1', '5', '15', '30', '60', '120', '240', '480', '1D', '1W', '1M'],
       supports_marks: false,
       supports_timescale_marks: false
     };
@@ -369,7 +370,6 @@ const datafeeds = symbol => {
     onDataCallback,
     onErrorCallback
   ) {
-    console.log("symbolInfo: ", symbolInfo);
     let from = rangeStartDate * 1000;
     let to = rangeEndDate * 1000;
     let resolutionTime = datafeedUtil.filteringTime(resolution);
@@ -386,16 +386,31 @@ const datafeeds = symbol => {
         baseCurrencyId: 1, //基准货币主键
         targetCurrencyId: 2 //目标货币主键
       };
+      
+      window.ws.onopen = function(e) { 
+        console.log('Kline Connection open ...');
+        let t = setInterval(() => {
+          if(!window.ws) {
+            clearInterval(t);
+            return;
+          }
+          window.ws.send('ping');
+        }, 1000 * 3);
 
-      if (!window.hasWsMessage) {
-        // console.log('get kline data.....')
-        window.ws.send(JSON.stringify(config));
-        window.hasWsMessage = true;
+        if (!window.hasWsMessage) {
+          // console.log('get kline data.....')
+          window.ws.send("LOOM_USDT");
+          window.hasWsMessage = true;
+        }
       }
 
       window.ws.onmessage = function(e) {
+        if(e.data === 'pong') {
+          console.log('kline: ', e.data);
+          return;
+        }
         const record = JSON.parse(e.data);
-        console.log('Kline!!!!!!!!!!record: ', record);
+        console.log('Kline recevied record: ', record);
         // JSON格式
         let websocketParams = {
           data: e.data,
@@ -405,38 +420,9 @@ const datafeeds = symbol => {
           }
         };
         datafeedUtil.dealWebsocket(websocketParams);
-
-        /* let binaryParams = {
-        data: e.data,
-        callback: (data) => {
-          dealSuccess(JSON.stringify(JSON.parse(data).data))
-        }
-      }
-
-      // 二进制
-      datafeedUtil.onWsMessage(binaryParams); */
       };
     };
 
-    // var httpGetData = function() {
-    //   that
-    //     ._send(that._datafeedURL, {
-    //       symbol: symbolInfo.ticker.toUpperCase(),
-    //       resolution: resolution,
-    //       from: rangeStartDate,
-    //       to: rangeEndDate
-    //     })
-    //     .then(function(response) {
-    //       dealSuccess(response);
-    //     })
-    //     .catch(function(arg) {
-    //       if (!!onErrorCallback) {
-    //         onErrorCallback('network error: ' + JSON.stringify(arg));
-    //       }
-    //     });
-    // };
-
-    // httpGetData();
     websocketGetData();
 
     var dealSuccess = function(data) {

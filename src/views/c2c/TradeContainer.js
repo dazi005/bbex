@@ -299,13 +299,23 @@ class TradeContainer extends Component {
     //登录后才打开websockets
     if (JSON.parse(sessionStorage.getItem('account'))) {
       const userId = JSON.parse(sessionStorage.getItem('account')).id;
-      var ws = new window.ReconnectingWebSocket(`${WS_ADDRESS}/bbex/websocket?${userId}`);
+      var ws = new window.ReconnectingWebSocket(`${WS_ADDRESS}/bbex/bbusersocket?${userId}`);
       ws.onopen = evt => {
         console.log('Connection open ...');
-        ws.send('Hello bbex!');
+        let t = setInterval(() => {
+          if(!ws) {
+            clearInterval(t);
+            return;
+          }
+          ws.send('ping');
+        }, 1000 * 3);
       };
 
       ws.onmessage = evt => {
+        if(evt.data === 'pong') {
+          console.log('c2c: ', evt.data);
+          return;
+        }
         const record = JSON.parse(evt.data);
         if (record.id) {
           let hasRecord = false;
