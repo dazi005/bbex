@@ -49,17 +49,7 @@ const datafeeds = symbol => {
 
   // 获取服务器时间
   Datafeeds.UDFCompatibleDatafeed.prototype.getServerTime = function(callback) {
-    callback(new Date().getTime());
-
-    /*   if (this._configuration.supports_time) {
-      this._send(this._datafeedURL + "/time", {})
-        .done(function (response) {
-          callback(+response);
-        })
-        .fail(function () {
-
-        });
-    } */
+    callback(Date.now());
   };
 
   Datafeeds.UDFCompatibleDatafeed.prototype.on = function(event, callback) {
@@ -132,11 +122,15 @@ const datafeeds = symbol => {
   // 此方法旨在提供填充配置数据的对象
   Datafeeds.UDFCompatibleDatafeed.prototype.onReady = function(callback) {
     if (this._configuration) {
-      callback(this._configuration);
+      setTimeout(() => {
+        callback(this._configuration);
+      });
     } else {
       var that = this;
       this.on('configuration_ready', function() {
-        callback(that._configuration);
+        setTimeout(() => {
+          callback(this._configuration);
+        });
       });
     }
   };
@@ -323,7 +317,9 @@ const datafeeds = symbol => {
       }
 
       that._logMessage('Symbol resolved: ' + (Date.now() - resolveRequestStartTime));
-      onSymbolResolvedCallback(postProcessedData);
+      setTimeout(() => {
+        onSymbolResolvedCallback(postProcessedData);
+      });
     }
 
     if (!this._configuration.supports_group_request) {
@@ -465,10 +461,16 @@ const datafeeds = symbol => {
         }
         bars.push(barValue);
       }
+      bars = bars.sort((a, b) => {
+        return a.time - b.time;
+      })
+      .filter((item, index, array) => {
+        return (!index || item.time !== array[index - 1].time) && item.close;
+      });
 
       let meta = {
         version: that._protocolVersion,
-        noData: true,
+        noData: bars.length === 0,
         nextTime: data.nb || data.nextTime
       };
 
@@ -728,9 +730,13 @@ const datafeeds = symbol => {
     onResolveErrorCallback
   ) {
     if (!this._symbolsInfo.hasOwnProperty(symbolName)) {
-      onResolveErrorCallback('invalid symbol');
+      setTimeout(() => {
+        onResolveErrorCallback('invalid symbol');
+      });
     } else {
-      onSymbolResolvedCallback(this._symbolsInfo[symbolName]);
+      setTimeout(() => {
+        onSymbolResolvedCallback(this._symbolsInfo[symbolName]);
+      });
     }
   };
 
