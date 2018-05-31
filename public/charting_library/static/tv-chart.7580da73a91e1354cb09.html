@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <link type="text/css" href="bundles/vendors.a94ef44ed5c201cefcf6ad7460788c1a.css" rel="stylesheet" />
+  <link type="text/css" href="bundles/library.a8de6f8cf4dda6895071c6ec45f900d9.css" rel="stylesheet" />
+  <style>
+    html {
+      background: #2A2F3C;
+    }
+
+    .chart-page {
+      background: #2A2F3C;
+    }
+
+    .loading-indicator {
+      background: #2A2F3C;
+    }
+
+    #library-container {
+      border: 1px solid #2A2F3C;
+      border-right: 0;
+    }
+
+    #library-container .tv-main-panel {
+      background: #000;
+    }
+
+    .tv-side-toolbar {
+      border: 0;
+    }
+
+    .chart-container.active {
+      border: 1px solid #2A2F3C;
+      background: #191f2b;
+    }
+
+    .tv-side-toolbar .tools-group:not(:first-child):not(.no-delimiter):before {
+      background: #2A2F3C;
+    }
+
+    .separator-3cgsM4c1-,
+    .drawing-favorites-toolbar .tools-group .button.active,
+    .drawing-favorites-toolbar .tools-group .button:active,
+    .properties-toolbar .tools-group .button.active,
+    .properties-toolbar .tools-group .button:active,
+    .tv-side-toolbar .tools-group .button.active .side,
+    .tv-side-toolbar .tools-group .button.selected .main,
+    .tv-side-toolbar .tools-group .button:active .side,
+    .tv-side-toolbar .tools-group .button:not(.subgroup).active,
+    .tv-side-toolbar .tools-group .button:not(.subgroup).selected,
+    .tv-side-toolbar .tools-group .button:not(.subgroup):active {
+      background-color: #2A2F3C;
+    }
+
+    .drawing-favorites-toolbar .tools-group .button,
+    /*.properties-toolbar .tools-group .button, */
+
+    .tv-side-toolbar .tools-group .button.active,
+    .tv-side-toolbar .tools-group .button.selected,
+    .tv-side-toolbar .tools-group .button:active,
+    .tv-side-toolbar .tools-group .button:hover {
+      background-color: #2A2F3C;
+      border-color: #2A2F3C;
+    }
+
+    .favored-list-container span {
+      background: #191f2b;
+      border-color: #191f2b;
+    }
+
+    .bottom-widgetbar-content.backtesting .button,
+    .header-chart-panel .button,
+    .hotlist-controls .button,
+    .symbol-edit-widget .button {
+      background: #2A2F3C;
+      border-color: #5a6069;
+      color: #666666;
+    }
+
+    .header-chart-panel .button a {
+      color: #5ec6e8;
+    }
+
+    .on-widget .getimage .icon {
+      fill: #666666;
+    }
+
+    .chart-controls-bar {
+      background: #191f2b;
+    }
+
+    .chart-controls-bar-buttons a:not(.disabled):hover {
+      background: #191f2b;
+    }
+
+    .chart-container.inactive .chart-controls-bar-buttons a:not(.disabled):hover {
+      background: #191f2b;
+    }
+
+    .series-status-text.market,
+    .series-status-text.realtime {
+      color: #029688;
+    }
+
+    .series-status-text.market .dot,
+    .series-status-text.realtime .dot {
+      background-color: #029688;
+    }
+
+    .tv-close-panel {
+      border-color: #3C4049;
+      background-color: #3C4049;
+    }
+
+    .drawing-favorites-toolbar .tools-group .button,
+    .feature-no-touch .tv-side-toolbar .tools-group .button:active,
+    .feature-no-touch .tv-side-toolbar .tools-group .button:hover,
+    .feature-touch .tv-side-toolbar .tools-group .button:active,
+    .properties-toolbar .tools-group .button,
+    .tv-side-toolbar .tools-group .button.active,
+    .tv-side-toolbar .tools-group .button.selected {
+      border-color: #2A2F3C;
+    }
+
+    .favored-list-container span.active,
+    .favored-list-container span.selected,
+    .feature-no-touch .favored-list-container span:active,
+    .feature-touch .favored-list-container span:active {
+      background: #3C4049 !important;
+    }
+
+    body {
+      font-size: 11px;
+    }
+
+    .onchart-tv-logo.expanded a.inner {
+      background: none !important;
+    }
+
+    .onchart-tv-logo.expanded .wrapper {
+      background: none;
+    }
+
+    @media only screen and (max-width: 768px) {
+      /* plus or minus toggle button on left side of text block such as "bitbank, 60, btc_jpy" */
+      .pane-legend .pane-legend-minbtn {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body class="chart-page on-widget">
+  <div class="loading-indicator" id="loading-indicator"></div>
+  <script src="js/external/spin.min.js"></script>
+  <script>var JSServer = {}; var __initialEnabledFeaturesets = ["charting_library"];</script>
+  <script>(function () { window.urlParams = (function () { var j, h = /\+/g, m = /([^&=]+)=?([^&]*)/g, e = function (o) { return decodeURIComponent(o.replace(h, " ")).replace(/<\/?[^>]+(>|$)/g, "") }, k = function () { var p = location.href; var o = p.indexOf("#"); if (o >= 0) { return p.substring(o + 1) } else { throw "Unexpected use of this page" } }(), n = {}; while (j = m.exec(k)) { n[e(j[1])] = e(j[2]) } var l = window.parent[n.uid]; var i = ["datafeed", "customFormatters", "brokerFactory"]; for (var g in l) { if (i.indexOf(g) === -1) { n[g] = JSON.stringify(l[g]) } } return n })(); window.locale = urlParams.locale; window.language = urlParams.locale; window.addCustomCSSFile = function (e) { var g = document.createElement("link"); document.getElementsByTagName("head")[0].appendChild(g); g.setAttribute("type", "text/css"); g.setAttribute("rel", "stylesheet"); g.setAttribute("href", e) }; if (!!urlParams.customCSS) { window.addCustomCSSFile(urlParams.customCSS) } var f = {}; if (typeof urlParams.loading_screen === "string") { try { f = JSON.parse(urlParams.loading_screen) } catch (d) { } } var a = document.getElementById("loading-indicator"); if (f.backgroundColor) { a.style = "background-color: " + f.backgroundColor } var b = (f.foregroundColor) ? f.foregroundColor : "#00A2E2"; var c = new Spinner({ lines: 17, length: 0, width: 3, radius: 30, scale: 1, corners: 1, color: b, opacity: 0, rotate: 0, direction: 1, speed: 1.5, trail: 60, fps: 20, zIndex: 2000000000, className: "spinner", top: "50%", left: "50%", shadow: false, hwaccel: false }).spin(a) })();</script>
+  <script src="bundles/vendors.be39e0d831d7b65e9f31.js"></script>
+  <script src="bundles/library.77596ca6783cb5996d22.js"></script>
+</body>
+
+</html>

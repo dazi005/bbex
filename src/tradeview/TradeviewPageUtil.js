@@ -18,7 +18,7 @@ const datafeedConfig = params => {
         datafeed: new Datafeeds.UDFCompatibleDatafeed(serverUrl, pushInterval),
         width: '100%',
         height: '380',
-        // libraryPath: '/charting_library/',
+        library_path: "charting_library/",
         locale: 'zh',
         drawings_access: {
             type: 'black',
@@ -26,6 +26,7 @@ const datafeedConfig = params => {
                 name: 'Regression Trend'
             }]
         },
+        theme:'Black',
         // autosize: true,
         timezone: 'Asia/Shanghai',
         toolbar_bg: '#292f3d',

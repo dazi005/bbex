@@ -383,6 +383,7 @@ const datafeeds = symbol => {
         targetCurrencyId: 2 //目标货币主键
       };
       
+      /*
       window.ws.onopen = function(e) { 
         console.log('Kline Connection open ...');
         let t = setInterval(() => {
@@ -398,6 +399,16 @@ const datafeeds = symbol => {
           window.ws.send("LOOM_USDT");
           window.hasWsMessage = true;
         }
+      }*/
+
+      try {
+        if (!window.hasWsMessage) {
+          // console.log('get kline data.....')
+          window.ws.send("LOOM_USDT");
+          window.hasWsMessage = true;
+        }
+      } catch(e){
+        console.log('send error: ',e)
       }
 
       window.ws.onmessage = function(e) {
