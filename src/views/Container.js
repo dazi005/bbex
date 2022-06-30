@@ -57,14 +57,14 @@ class Container extends Component {
       <div className="container">
         <header className="header">
           <Link className="logo" to="/">
-            <img src={logo} alt="logo" width="60" height="60" />
+            GAMBLE YOUR LIFE ON BYBIT 
           </Link>
           <ul className="nav-bar">
             <li>
-              <Link to="/trade">交易中心</Link>
+              <Link to="/trade">GAMBLE</Link>
             </li>
             <li>
-              <Link to="/c2c">C2C</Link>
+              <Link to="/c2c">P2P with Camel</Link>
             </li>
           </ul>
           {!isLogin && (
@@ -147,7 +147,7 @@ class Container extends Component {
                     </Link>
                   </li>
                   <li>
-                    联系邮箱：<Link to="mailto: support@bbex.com">support@bbex.com</Link>
+     
                   </li>
                 </ul>
               </div>
@@ -176,7 +176,7 @@ class Container extends Component {
                 BTC.com矿池
               </Link>
             </div>
-            <div className="footer-copyright">Copyright 2018 All Rights Reserved.</div>
+            <div className="footer-copyright">Copyright Camel & HellSpawn 2022 All Rights Reserved.</div>
           </div>
         </footer>
       </div>
