@@ -6,7 +6,7 @@
     "antd": "^3.4.1",
     "classnames": "^2.2.5",
     "copy-to-clipboard": "^3.0.8",
-    "jquery": "^3.3.1",
+    "jquery": "^3.5.0",
     "qrcode.react": "^0.8.0",
     "react": "^16.3.1",
     "react-custom-scrollbars": "^4.2.1",
