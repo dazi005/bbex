@@ -57,22 +57,22 @@ class Container extends Component {
       <div className="container">
         <header className="header">
           <Link className="logo" to="/">
-            GAMBLE YOUR LIFE ON BYBIT 
+            Asser & Co Exchange 
           </Link>
           <ul className="nav-bar">
             <li>
-              <Link to="/trade">GAMBLE</Link>
+              <Link to="/trade">Trade</Link>
             </li>
             <li>
-              <Link to="/c2c">P2P with Camel</Link>
+              <Link to="/c2c">Peer-2-Peer</Link>
             </li>
           </ul>
           {!isLogin && (
             <div className="user-status">
               <i className="iconfont icon-yonghu" />
-              <Link to="/signin">登录</Link>
+              <Link to="/signin">Sign-in</Link>
               /
-              <Link to="/register">注册</Link>
+              <Link to="/register">Register</Link>
             </div>
           )}
           {isLogin && (
@@ -176,7 +176,7 @@ class Container extends Component {
                 BTC.com矿池
               </Link>
             </div>
-            <div className="footer-copyright">Copyright Camel & HellSpawn 2022 All Rights Reserved.</div>
+            <div className="footer-copyright">Copyright 2023 Spawny Gamble Casino All Rights Reserved.</div>
           </div>
         </footer>
       </div>

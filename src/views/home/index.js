@@ -18,7 +18,7 @@ import partner6 from '../../assets/images/partner/Jlab.png';
 const TabPane = Tabs.TabPane;
 const Search = Input.Search;
 const searchBar = (
-  <Search placeholder="输入关键词" onSearch={value => console.log(value)} style={{ width: 200 }} />
+  <Search placeholder="Search" onSearch={value => console.log(value)} style={{ width: 200 }} />
 );
 
 class Home extends Component {
@@ -117,7 +117,7 @@ class Home extends Component {
         )
       },
       {
-        title: `最新价${coinType && `(${coinType})`}`,
+        title: `Trade${coinType && `(${coinType})`}`,
         dataIndex: 'latestPrice',
         key: 'latestPrice',
         sorter: (a, b) => a.price - b.price,
@@ -203,7 +203,7 @@ class Home extends Component {
         </div>
         <div className="partner">
           <div className="partner-inner">
-            <h2>-合作伙伴-</h2>
+            <h2>-Partners</h2>
             <ul className="content-inner">
               <li>
                 <a href="https://po.im/#/home" target="_blank" rel="noopener noreferrer">
